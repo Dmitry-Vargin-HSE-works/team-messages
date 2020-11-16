@@ -19,4 +19,8 @@ public class User {
     private ObjectId id;
     @Indexed
     private String username;
+
+    public User(String s) {
+        this.username = s;
+    }
 }
