@@ -24,8 +24,18 @@ The following guides illustrate how to use some features concretely:
 * [Integrating Data](https://spring.io/guides/gs/integration/)
 * [Accessing Data with MongoDB](https://spring.io/guides/gs/accessing-data-mongodb/)
 
-### Additional Links
-These additional references should also help you:
+### Kafka
+
+* Requirements: Docker-compose
+* Script: kafka.yml
+
+how to up and down:
+```shell script
+sudo docker-compose -f kafka.yml up
+```
+```shell script
+sudo docker-compose -f kafka.yml down
+```
 
 * [Gradle Build Scans – insights for your project's build](https://scans.gradle.com#gradle)
 
