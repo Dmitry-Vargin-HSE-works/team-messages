@@ -3,7 +3,7 @@
     <module name="team.main" />
     <option name="SPRING_BOOT_MAIN_CLASS" value="com.giggle.team.TeamApplication" />
     <option name="ENABLE_JMX_AGENT" value="false" />
-    <option name="ACTIVE_PROFILES" value="application-dev.properties" />
+    <option name="ACTIVE_PROFILES" value="dev" />
     <option name="ALTERNATIVE_JRE_PATH" />
     <method v="2">
       <option name="Make" enabled="true" />
