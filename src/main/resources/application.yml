@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: Marvel
+  data:
+    mongodb:
+      host: ${MONGO_DB_HOST}
+      port: ${MONGO_DB_PORT}
+      database: ${MONGO_DB_DATABASE}
+      username: ${MONGO_DB_USERNAME}
+      password: ${MONGO_DB_PASSWORD}
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: test-consumer-group
+    template:
+      default-topic: chat-topic
+server:
+  port: 8080
+  http2:
+    enabled: true
+  error:
+    include-exception: true
+    include-binding-errors: always
+    include-message: always
+    include-stacktrace: always
+logging:
+  level:
+    root: info
+    org.springframework.web: off

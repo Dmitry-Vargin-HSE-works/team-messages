@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: Marvel
+  datasource:
+    url: mongodb://localhost:27017/marvel
+    username: mongodb
+    password: foxinsocks
+  devtools:
+    livereload:
+      enabled: true
+    add-properties: true
+  profiles:
+    active: dev
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: test-consumer-group
+    template:
+      default-topic: chat-topic
+server:
+  port: ${port:8080}
+  address: 127.0.0.1
+  http2:
+    enabled: true
+  error:
+    include-exception: true
+    include-binding-errors: always
+    include-message: always
+    include-stacktrace: always
+logging:
+  level:
+    root: debug
+    org.springframework.web: off
+  file:
+    name: logs/application-debug.log
