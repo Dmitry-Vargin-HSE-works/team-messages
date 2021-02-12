@@ -15,8 +15,6 @@ spring:
     bootstrap-servers: localhost:9092
     consumer:
       group-id: test-consumer-group
-    template:
-      default-topic: chat-topic
 server:
   port: ${port:8080}
   address: 127.0.0.1
@@ -33,3 +31,4 @@ logging:
     org.springframework.web: off
   file:
     name: logs/application-debug.log
+message-topic: Chat-Topic

@@ -30,10 +30,10 @@ The following guides illustrate how to use some features concretely:
 * Script: kafka.yml
 
 how to up and down:
-```shell script
+```shell
 sudo docker-compose -f kafka.yml up
 ```
-```shell script
+```shell
 sudo docker-compose -f kafka.yml down
 ```
 
