@@ -16,8 +16,11 @@ public class WebSocketEventListener {
 
 	private static final Logger logger = LoggerFactory.getLogger(WebSocketEventListener.class);
 
-	@Autowired
-	private SimpMessageSendingOperations messagingTemplate;
+	private final SimpMessageSendingOperations messagingTemplate;
+
+	public WebSocketEventListener(SimpMessageSendingOperations messagingTemplate) {
+		this.messagingTemplate = messagingTemplate;
+	}
 
 	@EventListener
 	public void handleWebSocketConnectListener(SessionConnectedEvent event) {
@@ -32,12 +35,11 @@ public class WebSocketEventListener {
 		String username = (String) headerAccessor.getSessionAttributes().get("username");
 		if (username != null) {
 			logger.info("User Disconnected : " + username);
-
 			ChatMessage chatMessage = new ChatMessage();
 			chatMessage.setType(ChatMessage.MessageType.LEAVE);
 			chatMessage.setSender(username);
-
 			messagingTemplate.convertAndSend("/topic/public", chatMessage);
 		}
 	}
+
 }

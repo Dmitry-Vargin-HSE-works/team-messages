@@ -1,8 +1,8 @@
 spring:
   application:
-    name: Marvel
+    name: Team
   datasource:
-    url: mongodb://localhost:27017/marvel
+    url: mongodb://localhost:27017
     username: mongodb
     password: foxinsocks
   devtools:
@@ -12,9 +12,10 @@ spring:
   profiles:
     active: dev
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: 158.101.206.85:9092
     consumer:
-      group-id: test-consumer-group
+      group-id: test-consumer-group # ??? what is this
+      enable-auto-commit: false # todo google it
 server:
   port: ${port:8080}
   address: 127.0.0.1
@@ -27,7 +28,7 @@ server:
     include-stacktrace: always
 logging:
   level:
-    root: debug
+    root: info
     org.springframework.web: off
   file:
     name: logs/application-debug.log
