@@ -14,8 +14,9 @@ spring:
   kafka:
     bootstrap-servers: 158.101.206.85:9092
     consumer:
-      group-id: test-consumer-group # ??? what is this
-      enable-auto-commit: false # todo google it
+      group-id: group-consumer # ??? what is this
+      enable-auto-commit: true # todo google it
+      auto-offset-reset: latest
 server:
   port: ${port:8080}
   address: 127.0.0.1
