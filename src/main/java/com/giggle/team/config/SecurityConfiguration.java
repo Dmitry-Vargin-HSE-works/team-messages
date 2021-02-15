@@ -1,11 +1,14 @@
 package com.giggle.team.config;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableConfigurationProperties
@@ -20,27 +23,31 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/").permitAll()
+                .antMatchers("/","/auth").permitAll()
                 .anyRequest().authenticated()
                 .and().httpBasic()
                 .and().csrf().disable()
                 .formLogin().disable();
     }
 
-    /*
-     * I commented this, due it I must use encode password in
-     * inMemoryAuthentication config
+
     @Bean
     public PasswordEncoder passwordEncoder() {
-         // about password encoders
-         // https://reflectoring.io/spring-security-password-handling/
-        return new BCryptPasswordEncoder();
+        // about password encoders
+        // https://reflectoring.io/spring-security-password-handling/
+        return new BCryptPasswordEncoder(10);
     }
-    */
+
 
     @Override
     public void configure(AuthenticationManagerBuilder builder) throws Exception {
-        builder.inMemoryAuthentication().withUser("admin").password("{noop}root").roles("ADMIN");
-        builder.inMemoryAuthentication().withUser("spring").password("{noop}root").roles("USER");
+        builder.inMemoryAuthentication()
+                .withUser("admin")
+                .password("$2y$10$LKR2johV8BDiMeA/cga2Yut3VU7ZmsPr3cOgBsJEnbFfKZTHeMUYq")
+                .roles("ADMIN");
+        builder.inMemoryAuthentication()
+                .withUser("spring")
+                .password("$2y$10$LKR2johV8BDiMeA/cga2Yut3VU7ZmsPr3cOgBsJEnbFfKZTHeMUYq")
+                .roles("USER");
     }
 }
