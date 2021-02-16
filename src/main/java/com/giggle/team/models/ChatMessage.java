@@ -1,4 +1,4 @@
-package com.giggle.team.model;
+package com.giggle.team.models;
 
 public class ChatMessage {
     private MessageType type;
