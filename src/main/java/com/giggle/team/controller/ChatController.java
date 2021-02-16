@@ -1,11 +1,10 @@
 package com.giggle.team.controller;
 
-import com.giggle.team.model.ChatMessage;
+import com.giggle.team.models.ChatMessage;
 import com.giggle.team.services.KafkaProducer;
 import com.giggle.team.storage.MessageStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -20,19 +19,22 @@ public class ChatController {
 
     private static final Logger logger = LoggerFactory.getLogger(KafkaProducer.class);
 
-    @Autowired
-    KafkaProducer producer;
+    private final KafkaProducer producer;
 
-    @Autowired
-    MessageStorage storage;
+    private final MessageStorage storage;
+
+    public ChatController(KafkaProducer producer, MessageStorage storage) {
+        this.producer = producer;
+        this.storage = storage;
+    }
 
     /**
      * Receiving message from Web Browser using STOMP CLIENT and further Sending
-     * message to a KAFKA TOPIC
+     * message to a kafka topic
      */
     @GetMapping(value = "/sendMessage")
     @MessageMapping("/sendMessage")
-    public void sendMessage(ChatMessage message) throws Exception {
+    public void sendMessage(ChatMessage message) {
         logger.debug("ChatController.sendMessage : Received message from Web Browser using STOMP Client and further sending it to a KAFKA Topic");
         producer.send(ChatMessage.MessageType.valueOf(message.getType().name()) + "-" + message.getContent() + "-"
                 + message.getSender());
