@@ -1,10 +1,12 @@
 spring:
   application:
     name: Team
-#  datasource:
-#    url: mongodb://localhost:27017
-#    username: mongodb
-#    password: foxinsocks
+  datasource:
+    url: mongodb://localhost:27017
+    username: mongodb
+    password: foxinsocks
+    hikari:
+      auto-commit: true
   devtools:
     livereload:
       enabled: true
