@@ -2,9 +2,9 @@ spring:
   application:
     name: Team
   datasource:
-    url: mongodb://localhost:27017
-    username: mongodb
-    password: foxinsocks
+    url: mongodb://158.101.206.85:27017
+    username: kafkadmin
+    password: painfulkafka
     hikari:
       auto-commit: true
   devtools:
