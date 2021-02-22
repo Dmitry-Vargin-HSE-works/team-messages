@@ -4,6 +4,7 @@ public class ChatMessage {
     private MessageType type;
     private String content;
     private String sender;
+    private String chatId;
 
     public enum MessageType {
         CHAT,
@@ -15,8 +16,9 @@ public class ChatMessage {
 		super();
 	}
 
-	public ChatMessage(MessageType message, String content, String sender) {
+	public ChatMessage(String chatId, MessageType message, String content, String sender) {
 		super();
+		this.chatId = chatId;
 		this.type = message;
 		this.content = content;
 		this.sender = sender;
@@ -46,7 +48,15 @@ public class ChatMessage {
         this.sender = sender;
     }
 
-	@Override
+    public String getChatId() {
+        return chatId;
+    }
+
+    public void setChatId(String chatId) {
+        this.chatId = chatId;
+    }
+
+    @Override
 	public String toString() {
 		return "ChatMessage [type=" + type + ", content=" + content + ", sender=" + sender + "]";
 	}

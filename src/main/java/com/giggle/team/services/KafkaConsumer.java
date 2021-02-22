@@ -40,8 +40,8 @@ public class KafkaConsumer {
          * below line sends data to websocket i.e to web browser
          */
         storage.add(Arrays.toString(message));
-        this.template.convertAndSend("/topic/public",
-                new ChatMessage(ChatMessage.MessageType.valueOf(message[0]), message[1], message[2]));
+        this.template.convertAndSend("/topic/"+message[0],
+                new ChatMessage(message[0], ChatMessage.MessageType.valueOf(message[1]), message[2], message[3]));
     }
 
 }
