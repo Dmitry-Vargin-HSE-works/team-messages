@@ -31,12 +31,19 @@ function connect(event) {
 
 function onConnected() {
 	// Subscribe to the Public Topic
+	stompClient.subscribe("/topic/history/main-" + username, onMessageReceived);
 	stompClient.subscribe('/topic/main', onMessageReceived);
-
 	// Tell your username to the server
+
 	stompClient.send("/app/chat.addUser", {}, JSON.stringify({
 		sender : username,
 		type : 'JOIN'
+	}))
+
+	stompClient.send("/app/chat.getHistory", {}, JSON.stringify({
+		sender : username,
+		type : 'JOIN',
+		chatId: "main"
 	}))
 
 	connectingElement.classList.add('hidden');
