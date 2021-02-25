@@ -2,7 +2,7 @@ spring:
   application:
     name: Team
   datasource:
-    url: mongodb://158.101.206.85:27017
+    url: mongodb://158.101.206.85:27017/test
     username: kafkadmin
     password: painfulkafka
     hikari:
