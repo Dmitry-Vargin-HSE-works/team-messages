@@ -5,11 +5,14 @@ import com.giggle.team.repositories.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Collections;
 
 @RequestMapping(value = "/auth")
 @RestController
@@ -36,9 +39,11 @@ public class AuthController {
     @RequestMapping(value = "", method = RequestMethod.POST, consumes = "application/json")
     public ResponseEntity<String> userPost(@RequestBody User user) {
         try {
+            user.setPassword(encoder.encode(user.getPassword()));
+            userRepository.save(user);
             builder.inMemoryAuthentication()
                     .withUser(user.getUsername())
-                    .password(encoder.encode(user.getPassword()))
+                    .password(user.getPassword())
                     .roles("USER", "ADMIN")
                     .accountExpired(false)
                     .accountLocked(false)
@@ -84,7 +89,13 @@ public class AuthController {
      */
     @RequestMapping(value = "", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<User> userGet() {
-        return new ResponseEntity<>(new User(), HttpStatus.OK);
+        return new ResponseEntity<>(new User("admin",
+                "pupuk",
+                true,
+                true,
+                true,
+                true,
+                Collections.singleton(new SimpleGrantedAuthority("USER"))), HttpStatus.OK);
     }
 }
 
