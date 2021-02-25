@@ -1,5 +1,7 @@
 package com.giggle.team.models;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import lombok.NoArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
@@ -28,6 +30,7 @@ import java.util.function.Function;
 
 @Document(collection = "users")
 @TypeAlias("user")
+@NoArgsConstructor
 public class User implements Serializable, UserDetails, CredentialsContainer {
 
     private static final Log logger = LogFactory.getLog(User.class);
@@ -38,12 +41,18 @@ public class User implements Serializable, UserDetails, CredentialsContainer {
     @Id
     private ObjectId id;
     private TreeSet<Topic> topics;
-    private final String username;
-    private final Set<GrantedAuthority> authorities;
-    private final boolean accountNonExpired;
-    private final boolean accountNonLocked;
-    private final boolean credentialsNonExpired;
-    private final boolean enabled;
+
+    private String username;
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    private Set<GrantedAuthority> authorities;
+    private boolean accountNonExpired;
+    private boolean accountNonLocked;
+    private boolean credentialsNonExpired;
+    private boolean enabled;
     private String password;
 
     public User(String username, String password, boolean enabled,
@@ -86,7 +95,7 @@ public class User implements Serializable, UserDetails, CredentialsContainer {
      * @param username the username to use
      * @return the UserBuilder
      */
-    public static org.springframework.security.core.userdetails.User.UserBuilder withUsername(String username) {
+    public static UserBuilder withUsername(String username) {
         return builder().username(username);
     }
 
@@ -159,13 +168,13 @@ public class User implements Serializable, UserDetails, CredentialsContainer {
      * that this is considered insecure for production purposes.
      */
     @Deprecated
-    public static org.springframework.security.core.userdetails.User.UserBuilder withDefaultPasswordEncoder() {
+    public static UserBuilder withDefaultPasswordEncoder() {
         logger.warn("User.withDefaultPasswordEncoder() is considered unsafe for production and is only intended for sample applications.");
         PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
         return builder().passwordEncoder(encoder::encode);
     }
 
-    public static org.springframework.security.core.userdetails.User.UserBuilder withUserDetails(UserDetails userDetails) {
+    public static UserBuilder withUserDetails(UserDetails userDetails) {
         return withUsername(userDetails.getUsername())
                 .password(userDetails.getPassword())
                 .accountExpired(!userDetails.isAccountNonExpired())
@@ -216,8 +225,8 @@ public class User implements Serializable, UserDetails, CredentialsContainer {
      */
     @Override
     public boolean equals(Object rhs) {
-        if (rhs instanceof org.springframework.security.core.userdetails.User) {
-            return username.equals(((org.springframework.security.core.userdetails.User) rhs).username);
+        if (rhs instanceof User) {
+            return username.equals(((User) rhs).username);
         }
         return false;
     }
