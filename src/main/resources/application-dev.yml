@@ -1,10 +1,14 @@
 spring:
   application:
     name: Team
+  data:
+    mongodb:
+      password: painfulkafka
+      username: kafkadmin
+      host: 158.101.206.85
+      port: 27017
+      authentication-database: admin
   datasource:
-    url: mongodb://158.101.206.85:27017/test
-    username: kafkadmin
-    password: painfulkafka
     hikari:
       auto-commit: true
   devtools:
