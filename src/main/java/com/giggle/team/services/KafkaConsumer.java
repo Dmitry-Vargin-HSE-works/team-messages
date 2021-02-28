@@ -17,8 +17,7 @@ public class KafkaConsumer {
 
     private static final Logger log = LoggerFactory.getLogger(KafkaProducer.class);
 
-    @Value("${message-topic}")
-    String kafkaTopic = "topic";
+    String kafkaTopic = "Chat-Topic";
 
     private final MessageStorage storage;
     private final SimpMessagingTemplate template;
@@ -31,7 +30,7 @@ public class KafkaConsumer {
     /**
      * Receives messages from a specified Topic and sending it to to Websocket
      */
-    @KafkaListener(topics = "${message-topic}")
+    @KafkaListener(topics = "Chat-Topic")
     public void consumer(ConsumerRecord<?, ?> consumerRecord) {
         String[] message = consumerRecord.value().toString().split("-");
         log.info("Consumed data : '{}' from Kafka Topic : {}", Arrays.toString(message), kafkaTopic);

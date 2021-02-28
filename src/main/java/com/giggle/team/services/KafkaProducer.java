@@ -11,8 +11,7 @@ public class KafkaProducer {
 
 	private static final Logger logger = LoggerFactory.getLogger(KafkaProducer.class);
 
-	@Value("${message-topic}")
-	String kafkaTopic;
+	String kafkaTopic = "Chat-Topic";
 
 	private final KafkaTemplate<String, String> kafkaTemplate;
 
