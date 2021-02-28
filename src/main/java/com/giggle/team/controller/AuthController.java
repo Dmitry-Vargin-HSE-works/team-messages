@@ -2,6 +2,8 @@ package com.giggle.team.controller;
 
 import com.giggle.team.models.User;
 import com.giggle.team.repositories.UserRepository;
+import lombok.SneakyThrows;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -30,15 +32,26 @@ public class AuthController {
         this.userRepository = userRepository;
     }
 
+
+    @RequestMapping(value = "", method = RequestMethod.OPTIONS, produces = "application/json")
+    public ResponseEntity<?> collectionOptions() {
+        return ResponseEntity.ok()
+                .allow(HttpMethod.GET, HttpMethod.POST, HttpMethod.OPTIONS)
+                .build();
+    }
+
     /**
-     * in memory authentication
+     * in memory temp authentication and user save to database
      *
      * @param user - get the description from GET request
-     * @return Http status 200 or 500
+     * @return Http status 200 or 409
      */
+    @SneakyThrows
     @RequestMapping(value = "", method = RequestMethod.POST, consumes = "application/json")
-    public ResponseEntity<String> userPost(@RequestBody User user) {
-        try {
+    public ResponseEntity<String> postUser(@RequestBody User user) {
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+            return new ResponseEntity<>("User already exist", HttpStatus.CONFLICT);
+        } else {
             user.setPassword(encoder.encode(user.getPassword()));
             userRepository.save(user);
             builder.inMemoryAuthentication()
@@ -50,35 +63,6 @@ public class AuthController {
                     .credentialsExpired(false)
                     .disabled(false);
             return new ResponseEntity<>(HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-
-    /**
-     * database authentication
-     *
-     * @param user - get the description from GET request
-     * @return Http status 200 or 500
-     */
-    @RequestMapping(value = "database", method = RequestMethod.POST, consumes = "application/json")
-    public ResponseEntity<String> userPostDatabase(@RequestBody User user) {
-        try {
-            userRepository.save(user);
-            builder.inMemoryAuthentication()
-                    .withUser(user.getUsername())
-                    .password(encoder.encode(user.getPassword()))
-                    .roles("USER", "ADMIN")
-                    .accountExpired(false)
-                    .accountLocked(false)
-                    .credentialsExpired(false)
-                    .disabled(false);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -87,8 +71,8 @@ public class AuthController {
      *
      * @return User json representation
      */
-    @RequestMapping(value = "", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<User> userGet() {
+    @RequestMapping(value = "/example", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<User> getUserExample() {
         return new ResponseEntity<>(new User("admin",
                 "pupuk",
                 true,
@@ -96,6 +80,18 @@ public class AuthController {
                 true,
                 true,
                 Collections.singleton(new SimpleGrantedAuthority("USER"))), HttpStatus.OK);
+    }
+
+    /**
+     * find user by username
+     *
+     * @return user representation or 404 status
+     */
+    @RequestMapping(value = "", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<User> getUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .map(user -> new ResponseEntity<>(user, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }
 
