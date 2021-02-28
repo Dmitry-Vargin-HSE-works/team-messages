@@ -1,10 +1,6 @@
 package com.giggle.team.models;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.NoArgsConstructor;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.TypeAlias;
@@ -20,7 +16,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.Assert;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.function.Function;
 
 /*
@@ -32,11 +36,6 @@ import java.util.function.Function;
 @TypeAlias("user")
 @NoArgsConstructor
 public class User implements Serializable, UserDetails, CredentialsContainer {
-
-    private static final Log logger = LogFactory.getLog(User.class);
-
-    @BsonIgnore
-    private static final long serialVersionUID = 1L;
 
     @Id
     private ObjectId id;
@@ -169,11 +168,11 @@ public class User implements Serializable, UserDetails, CredentialsContainer {
      */
     @Deprecated
     public static UserBuilder withDefaultPasswordEncoder() {
-        logger.warn("User.withDefaultPasswordEncoder() is considered unsafe for production and is only intended for sample applications.");
         PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
         return builder().passwordEncoder(encoder::encode);
     }
 
+    @SuppressWarnings("unused")
     public static UserBuilder withUserDetails(UserDetails userDetails) {
         return withUsername(userDetails.getUsername())
                 .password(userDetails.getPassword())
@@ -376,6 +375,7 @@ public class User implements Serializable, UserDetails, CredentialsContainer {
          * @return the {@link org.springframework.security.core.userdetails.User.UserBuilder} for method chaining (i.e. to populate
          * additional attributes for this user)
          */
+        @SuppressWarnings("unused")
         public UserBuilder roles(String... roles) {
             List<GrantedAuthority> authorities = new ArrayList<>(
                     roles.length);
@@ -396,6 +396,7 @@ public class User implements Serializable, UserDetails, CredentialsContainer {
          * additional attributes for this user)
          * @see #roles(String...)
          */
+        @SuppressWarnings("unused")
         public UserBuilder authorities(GrantedAuthority... authorities) {
             return authorities(Arrays.asList(authorities));
         }
@@ -423,6 +424,7 @@ public class User implements Serializable, UserDetails, CredentialsContainer {
          * additional attributes for this user)
          * @see #roles(String...)
          */
+        @SuppressWarnings("unused")
         public UserBuilder authorities(String... authorities) {
             return authorities(AuthorityUtils.createAuthorityList(authorities));
         }
@@ -475,6 +477,7 @@ public class User implements Serializable, UserDetails, CredentialsContainer {
             return this;
         }
 
+        @SuppressWarnings("unused")
         public UserDetails build() {
             String encodedPassword = this.passwordEncoder.apply(password);
             return new org.springframework.security.core.userdetails.User(username, encodedPassword, !disabled, !accountExpired,

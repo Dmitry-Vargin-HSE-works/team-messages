@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
 
-@RequestMapping(value = "/auth")
 @RestController
+@RequestMapping(value = "/auth")
 public class AuthController {
 
     private final PasswordEncoder encoder;
