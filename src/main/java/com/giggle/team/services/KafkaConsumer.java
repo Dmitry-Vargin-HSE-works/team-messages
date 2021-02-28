@@ -1,6 +1,6 @@
 package com.giggle.team.services;
 
-import com.giggle.team.model.ChatMessage;
+import com.giggle.team.models.ChatMessage;
 import com.giggle.team.storage.MessageStorage;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
@@ -17,11 +17,11 @@ public class KafkaConsumer {
 
     private static final Logger log = LoggerFactory.getLogger(KafkaProducer.class);
 
-    private final MessageStorage storage;
-    private final SimpMessagingTemplate template;
-
     @Value("${message-topic}")
     String kafkaTopic = "topic";
+
+    private final MessageStorage storage;
+    private final SimpMessagingTemplate template;
 
     public KafkaConsumer(MessageStorage storage, SimpMessagingTemplate template) {
         this.storage = storage;
