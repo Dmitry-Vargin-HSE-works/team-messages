@@ -56,7 +56,7 @@ public class AuthController {
     @RequestMapping(value = "", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<User> userGet() {
         return new ResponseEntity<>(new User("example",
-                "exampe",
+                "example",
                 true,
                 true,
                 true,

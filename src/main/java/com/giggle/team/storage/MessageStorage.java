@@ -13,21 +13,21 @@ public class MessageStorage {
 	
 	private static final Logger log = LoggerFactory.getLogger(KafkaProducer.class);
 	
-	private final List<String> arralyList = new ArrayList<>();
+	private final List<String> arrayList = new ArrayList<>();
 	
 	public void add(String message){
-		arralyList.add(message);
+		arrayList.add(message);
 	}
 	
 	public String toString(){
 		log.info("Calling MessageStorage.toString(");
 		StringBuilder info = new StringBuilder();
-		arralyList.forEach(info::append);
+		arrayList.forEach(info::append);
 		log.info("info :"+info.toString());
 		return info.toString();
 	}
 	
 	public void clear(){
-		arralyList.clear();
+		arrayList.clear();
 	}
 }

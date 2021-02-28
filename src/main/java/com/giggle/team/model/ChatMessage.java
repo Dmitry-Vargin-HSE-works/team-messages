@@ -6,6 +6,7 @@ public class ChatMessage {
     private String sender;
     private String chatId;
 
+    @SuppressWarnings("unused")
     public enum MessageType {
         CHAT,
         JOIN,
@@ -36,6 +37,7 @@ public class ChatMessage {
         return content;
     }
 
+    @SuppressWarnings("unused")
     public void setContent(String content) {
         this.content = content;
     }
@@ -52,6 +54,7 @@ public class ChatMessage {
         return chatId;
     }
 
+    @SuppressWarnings("unused")
     public void setChatId(String chatId) {
         this.chatId = chatId;
     }
