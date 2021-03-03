@@ -9,21 +9,18 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class KafkaProducer {
-
 	private static final Logger logger = LoggerFactory.getLogger(KafkaProducer.class);
 	
-	private final KafkaTemplate<String, String> kafkaTemplate;
+	@Autowired
+	private KafkaTemplate<String, String> kafkaTemplate;
 	
-	public KafkaProducer(KafkaTemplate<String, String> kafkaTemplate) {
-		this.kafkaTemplate = kafkaTemplate;
-	}
-
 	@Value("${message-topic}")
 	String kafkaTopic;
-
+	
 	public void send(String data) {
+		System.out.println("\n\n" + "KafkaProducer\nsend:\n"+ data + "\n\n");
 		logger.info("KafkaProducer.send:: Topic : {} Data: {}",kafkaTopic, data);
 	    kafkaTemplate.send(kafkaTopic, data);
 	}
-
+	
 }
