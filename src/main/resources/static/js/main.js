@@ -10,14 +10,16 @@ var connectingElement = document.querySelector('.connecting');
 
 var stompClient = null;
 var username = null;
+var chatName = null;
 
-var colors = [ '#2196F3', '#32c787', '#00BCD4', '#ff5652', '#ffc107',
+var colors = [ '#2196F3', '#32c787', '#00bcd4', '#ff5652', '#ffc107',
 		'#ff85af', '#FF9800', '#39bbb0' ];
 
 function connect(event) {
 	username = document.querySelector('#name').value.trim();
-
-	if (username) {
+	chatName = document.querySelector("#chat-name").value.trim();
+	alert(chatName);
+	if (username && chatName) {
 		usernamePage.classList.add('hidden');
 		chatPage.classList.remove('hidden');
 
@@ -36,10 +38,12 @@ function onConnected() {
 	// Tell your username to the server
 	stompClient.send("/app/chat.addUser", {}, JSON.stringify({
 		sender : username,
+		chatname : chatName,
 		type : 'JOIN'
 	}))
 
 	connectingElement.classList.add('hidden');
+	document.getElementById("chat-title").textContent = chatName;
 }
 
 function onError(error) {
@@ -48,12 +52,13 @@ function onError(error) {
 }
 
 function sendMessage(event) {
-	alert("Sending message from web browser -- > Server");
+	// alert("Sending message from web browser -- > Server");
 	var messageContent = messageInput.value.trim();
 	if (messageContent && stompClient) {
 		var chatMessage = {
 			sender : username,
 			content : messageInput.value,
+			chatname : chatName,
 			type : 'CHAT'
 		};
 		stompClient.send("/app/sendMessage", {}, JSON
@@ -67,37 +72,38 @@ function onMessageReceived(payload) {
 	var message = JSON.parse(payload.body);
 
 	var messageElement = document.createElement('li');
+	if (message.chatname === chatName) {
+		if (message.type === 'JOIN') {
+			messageElement.classList.add('event-message');
+			message.content = message.sender + ' joined!';
+		} else if (message.type === 'LEAVE') {
+			messageElement.classList.add('event-message');
+			message.content = message.sender + ' left!';
+		} else {
+			messageElement.classList.add('chat-message');
+			var avatarElement = document.createElement('i');
+			var avatarText = document.createTextNode(message.sender[0]);
+			avatarElement.appendChild(avatarText);
+			avatarElement.style['background-color'] = getAvatarColor(message.sender);
 
-	if (message.type === 'JOIN') {
-		messageElement.classList.add('event-message');
-		message.content = message.sender + ' joined!';
-	} else if (message.type === 'LEAVE') {
-		messageElement.classList.add('event-message');
-		message.content = message.sender + ' left!';
-	} else {				
-		messageElement.classList.add('chat-message');
-		var avatarElement = document.createElement('i');
-		var avatarText = document.createTextNode(message.sender[0]);
-		avatarElement.appendChild(avatarText);
-		avatarElement.style['background-color'] = getAvatarColor(message.sender);
+			messageElement.appendChild(avatarElement);
 
-		messageElement.appendChild(avatarElement);
+			var usernameElement = document.createElement('span');
+			var usernameText = document.createTextNode(message.sender);
+			usernameElement.appendChild(usernameText);
+			messageElement.appendChild(usernameElement);
 
-		var usernameElement = document.createElement('span');
-		var usernameText = document.createTextNode(message.sender);
-		usernameElement.appendChild(usernameText);
-		messageElement.appendChild(usernameElement);
+		}
 
+		var textElement = document.createElement('p');
+		var messageText = document.createTextNode(message.content);
+		textElement.appendChild(messageText);
+
+		messageElement.appendChild(textElement);
+
+		messageArea.appendChild(messageElement);
+		messageArea.scrollTop = messageArea.scrollHeight;
 	}
-
-	var textElement = document.createElement('p');
-	var messageText = document.createTextNode(message.content);
-	textElement.appendChild(messageText);
-
-	messageElement.appendChild(textElement);
-
-	messageArea.appendChild(messageElement);
-	messageArea.scrollTop = messageArea.scrollHeight;
 }
 
 function getAvatarColor(messageSender) {
@@ -109,5 +115,5 @@ function getAvatarColor(messageSender) {
 	return colors[index];
 }
 
-usernameForm.addEventListener('submit', connect, true)
-messageForm.addEventListener('submit', sendMessage, true)
+usernameForm.addEventListener('submit', connect, true);
+messageForm.addEventListener('submit', sendMessage, true);

@@ -15,11 +15,8 @@ public class WebSocketEventListener {
 
 	private static final Logger logger = LoggerFactory.getLogger(WebSocketEventListener.class);
 
-	private final SimpMessageSendingOperations messagingTemplate;
-
-	public WebSocketEventListener(SimpMessageSendingOperations messagingTemplate) {
-		this.messagingTemplate = messagingTemplate;
-	}
+	@Autowired
+	private SimpMessageSendingOperations messagingTemplate;
 
 	@EventListener
 	public void handleWebSocketConnectListener(SessionConnectedEvent event) {
@@ -31,14 +28,17 @@ public class WebSocketEventListener {
 	public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
 		logger.info("WebSocketEventListener.handleWebSocketDisconnectListener");
 		StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
-		String username = (String) headerAccessor.getSessionAttributes().get("username");
+		String username = headerAccessor.getSessionAttributes().get("username").toString();
+		String chatname = headerAccessor.getSessionAttributes().get("chatname").toString();
 		if (username != null) {
 			logger.info("User Disconnected : " + username);
+
 			ChatMessage chatMessage = new ChatMessage();
 			chatMessage.setType(ChatMessage.MessageType.LEAVE);
 			chatMessage.setSender(username);
+			chatMessage.setChatname(chatname);
+
 			messagingTemplate.convertAndSend("/topic/public", chatMessage);
 		}
 	}
-
 }
