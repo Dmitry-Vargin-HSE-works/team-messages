@@ -12,11 +12,11 @@ spring:
   profiles:
     active: dev
   kafka:
-    bootstrap-servers: 158.101.206.85:9092
+    bootstrap-servers: localhost:9092
     consumer:
       group-id: group-consumer # ??? what is this
-      enable-auto-commit: true # todo google it
-      auto-offset-reset: latest
+      enable-auto-commit: false # todo google it
+      auto-offset-reset: earliest
 server:
   port: ${port:8080}
   address: 127.0.0.1
@@ -33,4 +33,4 @@ logging:
     org.springframework.web: off
   file:
     name: logs/application-debug.log
-message-topic: Chat-Topic
+message-topic: main

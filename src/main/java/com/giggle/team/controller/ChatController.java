@@ -1,10 +1,12 @@
 package com.giggle.team.controller;
 
+import com.giggle.team.listener.UserListener;
 import com.giggle.team.model.ChatMessage;
 import com.giggle.team.services.KafkaProducer;
 import com.giggle.team.storage.MessageStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.listener.ContainerProperties;
@@ -18,22 +20,30 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.Map;
+
 @RestController
 @RequestMapping(value = "/kafka/chat")
 public class ChatController {
 
-    private static final Logger logger = LoggerFactory.getLogger(KafkaProducer.class);
+    private static final Logger logger = LoggerFactory.getLogger(ChatController.class);
 
     private final ConcurrentKafkaListenerContainerFactory<String, String> factory;
     private final SimpMessagingTemplate template;
     private final KafkaProducer producer;
     private final MessageStorage storage;
+    private final Map<String, ArrayList<UserListener>> listenersMap;
 
-    public ChatController(ConcurrentKafkaListenerContainerFactory<String, String> factory, SimpMessagingTemplate template, KafkaProducer producer, MessageStorage storage) {
+    @Value("${message-topic}")
+    private String kafkaTopic;
+
+    public ChatController(ConcurrentKafkaListenerContainerFactory<String, String> factory, SimpMessagingTemplate template, KafkaProducer producer, MessageStorage storage, Map<String, ArrayList<UserListener>> listenersMap) {
         this.factory = factory;
         this.template = template;
         this.producer = producer;
         this.storage = storage;
+        this.listenersMap = listenersMap;
     }
 
     /**
@@ -76,6 +86,34 @@ public class ChatController {
     }
 
     /**
+     * Joining to a specific chat:
+     * Creating kafka listener container for each user for each chat and putting it to map
+     * Each listener will send received message to specific STOMP topic
+     */
+    @MessageMapping("/chat.join")
+    public void joinChat(@Payload ChatMessage chatMessage) {
+        logger.info("Received request for listener creation");
+        if (!listenersMap.containsKey(chatMessage.getSender())) {
+            logger.info("User's list of listeners not exist, creating new one");
+            listenersMap.put(chatMessage.getSender(), new ArrayList<>());
+            logger.info("Creating listener for " + chatMessage.getSender());
+            listenersMap.get(chatMessage.getSender()).add(
+                    new UserListener(kafkaTopic, chatMessage.getSender(), chatMessage.getChatId(), factory, template)
+            );
+        } else {
+            if (!listenersMap.get(chatMessage.getSender()).contains(
+                    new UserListener(chatMessage.getSender(), chatMessage.getChatId()))) {
+                logger.info("No already existing listener, creating new one");
+                listenersMap.get(chatMessage.getSender()).add(
+                        new UserListener(kafkaTopic, chatMessage.getSender(), chatMessage.getChatId(), factory, template)
+                );
+            } else {
+                logger.info("Such listener already exists");
+            }
+        }
+    }
+
+    /**
      * It consumes messages from a specified Topic
      */
     @RequestMapping(value = "/consumer", method = RequestMethod.GET, produces = "application/json")
@@ -83,22 +121,6 @@ public class ChatController {
         String messages = storage.toString();
         storage.clear();
         return messages;
-    }
-
-    @MessageMapping("/chat.getHistory")
-    public void getHistory(@Payload ChatMessage chatMessage) {
-        ConcurrentMessageListenerContainer<String, String> container = factory.createContainer("Chat-Topic");
-        container.getContainerProperties().setGroupId("group");
-        container.getContainerProperties().setAssignmentCommitOption(ContainerProperties.AssignmentCommitOption.NEVER);
-        container.getContainerProperties().setMessageListener((MessageListener<String, String>) record -> {
-            String[] message = record.value().split("-");
-            System.out.println("/history/" + chatMessage.getChatId() + "-" + chatMessage.getSender());
-            System.out.println(template.getUserDestinationPrefix());
-            template.convertAndSend("/topic/history/" + chatMessage.getChatId() + "-" + chatMessage.getSender(),
-                    new ChatMessage(message[0], ChatMessage.MessageType.valueOf(message[1]), message[2], message[3]));
-        });
-        container.start();
-        logger.debug("STARTED");
     }
 }
 
