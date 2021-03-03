@@ -11,20 +11,20 @@ public class ChatMessage {
         JOIN,
         LEAVE
     }
-    
+
     public ChatMessage() {
-		super();
-	}
+        super();
+    }
 
-	public ChatMessage(String sender, String content, String chatname, MessageType message) {
-		super();
+    public ChatMessage(String sender, String content, String chatname, MessageType message) {
+        super();
         this.sender = sender;
-		this.content = content;
-		this.chatname = chatname;
+        this.content = content;
+        this.chatname = chatname;
         this.type = message;
-	}
+    }
 
-	public MessageType getType() {
+    public MessageType getType() {
         return type;
     }
 
@@ -56,14 +56,13 @@ public class ChatMessage {
         this.chatname = chatname;
     }
 
-	@Override
-	public String toString() {
-        return "ChatMessage [sender=" + sender +
-                ", content=" + content + "," +
-                " chatname=" + chatname +
-                ",type = " + type;
-		//return "ChatMessage [type=" + type + ", content=" + content + ", sender=" + sender + "]";
-	}
-    
-    
+    @Override
+    public String toString() {
+        return "ChatMessage{" +
+                "type=" + type +
+                ", content='" + content + '\'' +
+                ", sender='" + sender + '\'' +
+                ", chatname='" + chatname + '\'' +
+                '}';
+    }
 }
