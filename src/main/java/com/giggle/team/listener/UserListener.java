@@ -34,7 +34,6 @@ public class UserListener {
         logger.info("Starting new listener for " + user + " in chat " + chat);
         container.start();
         logger.info("Started new listener for " + user + " in chat " + chat);
-
     }
 
     public UserListener(String user, String chat) {
@@ -42,8 +41,10 @@ public class UserListener {
         this.chat = chat;
     }
 
-    public ConcurrentMessageListenerContainer<String, String> getContainer() {
-        return container;
+    public void stopContainer() {
+        logger.info("Stopping listener for " + user + " in chat " + chat);
+        container.stop();
+        logger.info("Stopped listener for " + user + " in chat " + chat);
     }
 
     @Override

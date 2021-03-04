@@ -38,6 +38,9 @@ public class WebSocketEventListener {
         assert (headerAccessor.getSessionAttributes() != null);
         String username = (String) headerAccessor.getSessionAttributes().get("username");
         if (username != null) {
+            for (int i = 0; i < listenersMap.get(username).size(); i++) {
+                listenersMap.get(username).get(i).stopContainer();
+            }
             logger.info("User Disconnected : " + username);
             ChatMessage chatMessage = new ChatMessage();
             chatMessage.setType(ChatMessage.MessageType.LEAVE);
