@@ -4,27 +4,29 @@ public class ChatMessage {
     private MessageType type;
     private String content;
     private String sender;
-    private String chatname;
+    private String chatId;
 
+    @SuppressWarnings("unused")
     public enum MessageType {
         CHAT,
         JOIN,
-        LEAVE
+        LEAVE,
+        SYSTEM
     }
-
+    
     public ChatMessage() {
-        super();
-    }
+		super();
+	}
 
-    public ChatMessage(String sender, String content, String chatname, MessageType message) {
-        super();
-        this.sender = sender;
-        this.content = content;
-        this.chatname = chatname;
-        this.type = message;
-    }
+	public ChatMessage(String chatId, MessageType message, String content, String sender) {
+		super();
+		this.chatId = chatId;
+		this.type = message;
+		this.content = content;
+		this.sender = sender;
+	}
 
-    public MessageType getType() {
+	public MessageType getType() {
         return type;
     }
 
@@ -36,6 +38,7 @@ public class ChatMessage {
         return content;
     }
 
+    @SuppressWarnings("unused")
     public void setContent(String content) {
         this.content = content;
     }
@@ -48,21 +51,19 @@ public class ChatMessage {
         this.sender = sender;
     }
 
-    public String getChatname() {
-        return this.chatname;
+    public String getChatId() {
+        return chatId;
     }
 
-    public void setChatname(String chatname) {
-        this.chatname = chatname;
+    @SuppressWarnings("unused")
+    public void setChatId(String chatId) {
+        this.chatId = chatId;
     }
 
     @Override
-    public String toString() {
-        return "ChatMessage{" +
-                "type=" + type +
-                ", content='" + content + '\'' +
-                ", sender='" + sender + '\'' +
-                ", chatname='" + chatname + '\'' +
-                '}';
-    }
+	public String toString() {
+		return "ChatMessage [type=" + type + ", content=" + content + ", sender=" + sender + "]";
+	}
+    
+    
 }

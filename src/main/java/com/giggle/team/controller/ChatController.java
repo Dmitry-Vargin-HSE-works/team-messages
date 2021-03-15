@@ -1,7 +1,7 @@
 package com.giggle.team.controller;
 
 import com.giggle.team.listener.UserListener;
-import com.giggle.team.model.ChatMessage;
+import com.giggle.team.models.ChatMessage;
 import com.giggle.team.services.KafkaProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
