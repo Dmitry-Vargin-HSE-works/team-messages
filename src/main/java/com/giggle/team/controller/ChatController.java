@@ -3,7 +3,6 @@ package com.giggle.team.controller;
 import com.giggle.team.listener.UserListener;
 import com.giggle.team.model.ChatMessage;
 import com.giggle.team.services.KafkaProducer;
-import com.giggle.team.storage.MessageStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,17 +28,15 @@ public class ChatController {
     private final ConcurrentKafkaListenerContainerFactory<String, String> factory;
     private final SimpMessagingTemplate template;
     private final KafkaProducer producer;
-    private final MessageStorage storage;
     private final Map<String, ArrayList<UserListener>> listenersMap;
 
     @Value("${message-topic}")
     private String kafkaTopic;
 
-    public ChatController(ConcurrentKafkaListenerContainerFactory<String, String> factory, SimpMessagingTemplate template, KafkaProducer producer, MessageStorage storage, Map<String, ArrayList<UserListener>> listenersMap) {
+    public ChatController(ConcurrentKafkaListenerContainerFactory<String, String> factory, SimpMessagingTemplate template, KafkaProducer producer, Map<String, ArrayList<UserListener>> listenersMap) {
         this.factory = factory;
         this.template = template;
         this.producer = producer;
-        this.storage = storage;
         this.listenersMap = listenersMap;
     }
 
@@ -110,15 +107,6 @@ public class ChatController {
         }
     }
 
-    /**
-     * It consumes messages from a specified Topic
-     */
-    @RequestMapping(value = "/consumer", method = RequestMethod.GET, produces = "application/json")
-    public String getAllReceivedMessage() {
-        String messages = storage.toString();
-        storage.clear();
-        return messages;
-    }
 }
 
 
