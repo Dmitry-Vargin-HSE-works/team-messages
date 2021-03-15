@@ -1,6 +1,6 @@
 package com.giggle.team.listener;
 
-import com.giggle.team.model.ChatMessage;
+import com.giggle.team.models.ChatMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;

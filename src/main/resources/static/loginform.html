@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Вход</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" th:href="@{vendor/bootstrap/css/bootstrap.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{vendor/animate/animate.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{vendor/css-hamburgers/hamburgers.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{vendor/animsition/css/animsition.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{vendor/select2/select2.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{vendor/daterangepicker/daterangepicker.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{css/util.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{css/main.css}">
+</head>
+<body>
+<div class="limiter">
+    <div class="container-login100">
+        <div class="wrap-login100">
+            <form class="login100-form validate-form p-l-55 p-r-55 p-t-178"
+                  th:action="@{/signin}" method="post">
+                <span class="login100-form-title">Вход</span>
+                <div class="wrap-input100 validate-input m-b-16" data-validate="Введите почту">
+                    <input class="input100" type="email" id="email" name="email" th:placeholder="Почта">
+                    <span class="focus-input100"></span>
+                </div>
+                <div class="wrap-input100 validate-input" data-validate="Введите пароль">
+                    <input class="input100" type="password" id="password" name="password" th:placeholder="Пароль">
+                    <span class="focus-input100"></span>
+                </div>
+                <div align="center" th:if="${param.error}">
+                    <p style="font-size: 20; color: #FF1C19;">Имя пользователя или пароль не верны, повторите попытку</p>
+                </div>
+                <div align="center" th:if="${param.logout}">
+                    Вы вышли из аккаунта
+                </div>
+                <div class="text-right p-t-13 p-b-23"></div>
+                <div class="container-login100-form-btn">
+                    <button class="login100-form-btn"
+                            name="Submit" value="Login" type="Submit"
+                            th:text="Войти">
+                    </button>
+                </div>
+                <div class="flex-col-c p-t-170 p-b-40">
+                    <span class="txt1 p-b-9">Нет аккаунта?</span>
+                    <a href="/signup" class="txt3">Регистрация</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script defer th:src="@{vendor/jquery/jquery-3.2.1.min.js}"></script>
+<script defer th:src="@{vendor/animsition/js/animsition.min.js}"></script>
+<script defer th:src="@{vendor/bootstrap/js/popper.js}"></script>
+<script defer th:src="@{vendor/bootstrap/js/bootstrap.min.js}"></script>
+<script defer th:src="@{vendor/select2/select2.min.js}"></script>
+<script defer th:src="@{vendor/daterangepicker/moment.min.js}"></script>
+<script defer th:src="@{vendor/daterangepicker/daterangepicker.js}"></script>
+<script defer th:src="@{vendor/countdowntime/countdowntime.js}"></script>
+<script defer th:src="@{js/main.js}"></script>
+</body>
+</html>
