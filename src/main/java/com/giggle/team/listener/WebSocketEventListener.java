@@ -1,9 +1,8 @@
 package com.giggle.team.listener;
 
-import com.giggle.team.models.ChatMessage;
+import com.giggle.team.model.ChatMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
@@ -11,35 +10,43 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
+import java.util.ArrayList;
+import java.util.Map;
+
 @Component
 public class WebSocketEventListener {
 
-	private static final Logger logger = LoggerFactory.getLogger(WebSocketEventListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(WebSocketEventListener.class);
+    private final Map<String, ArrayList<UserListener>> listenersMap;
+    private final SimpMessageSendingOperations messagingTemplate;
 
-	@Autowired
-	private SimpMessageSendingOperations messagingTemplate;
+    public WebSocketEventListener(SimpMessageSendingOperations messagingTemplate, Map<String, ArrayList<UserListener>> listenersMap) {
+        this.messagingTemplate = messagingTemplate;
+        this.listenersMap = listenersMap;
+    }
 
-	@EventListener
-	public void handleWebSocketConnectListener(SessionConnectedEvent event) {
-		logger.info(
-				"WebSocketEventListener.handleWebSocketConnectListener:: NEW USER ADDED : Received a new web socket connection");
-	}
+    @EventListener
+    public void handleWebSocketConnectListener(SessionConnectedEvent event) {
+        logger.info(
+                "WebSocketEventListener.handleWebSocketConnectListener:: NEW USER ADDED : Received a new web socket connection");
+    }
 
-	@EventListener
-	public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
-		logger.info("WebSocketEventListener.handleWebSocketDisconnectListener");
-		StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
-		String username = headerAccessor.getSessionAttributes().get("username").toString();
-		String chatname = headerAccessor.getSessionAttributes().get("chatname").toString();
-		if (username != null) {
-			logger.info("User Disconnected : " + username);
+    @EventListener
+    public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
+        logger.info("WebSocketEventListener.handleWebSocketDisconnectListener");
+        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
+        assert (headerAccessor.getSessionAttributes() != null);
+        String username = (String) headerAccessor.getSessionAttributes().get("username");
+        if (username != null) {
+            for (int i = 0; i < listenersMap.get(username).size(); i++) {
+                listenersMap.get(username).get(i).stopContainer();
+            }
+            logger.info("User Disconnected : " + username);
+            ChatMessage chatMessage = new ChatMessage();
+            chatMessage.setType(ChatMessage.MessageType.LEAVE);
+            chatMessage.setSender(username);
+            messagingTemplate.convertAndSend("/topic/public", chatMessage);
+        }
+    }
 
-			ChatMessage chatMessage = new ChatMessage();
-			chatMessage.setType(ChatMessage.MessageType.LEAVE);
-			chatMessage.setSender(username);
-			chatMessage.setChatname(chatname);
-
-			messagingTemplate.convertAndSend("/topic/public", chatMessage);
-		}
-	}
 }

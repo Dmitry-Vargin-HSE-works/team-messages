@@ -10,24 +10,24 @@ import java.util.List;
 
 @Component
 public class MessageStorage {
-
-    private static final Logger log = LoggerFactory.getLogger(KafkaProducer.class);
-
-    private final List<String> arrayList = new ArrayList<>();
-
-    public void add(String message) {
-        arrayList.add(message);
-    }
-
-    public String toString() {
-        log.info("Calling MessageStorage.toString(");
-        StringBuilder info = new StringBuilder();
-        arrayList.forEach(info::append);
-        log.info("info :" + info.toString());
-        return info.toString();
-    }
-
-    public void clear() {
-        arrayList.clear();
-    }
+	
+	private static final Logger log = LoggerFactory.getLogger(KafkaProducer.class);
+	
+	private final List<String> arrayList = new ArrayList<>();
+	
+	public void add(String message){
+		arrayList.add(message);
+	}
+	
+	public String toString(){
+		log.info("Calling MessageStorage.toString(");
+		StringBuilder info = new StringBuilder();
+		arrayList.forEach(info::append);
+		log.info("info :"+info.toString());
+		return info.toString();
+	}
+	
+	public void clear(){
+		arrayList.clear();
+	}
 }
