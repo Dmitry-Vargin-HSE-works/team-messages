@@ -32,7 +32,7 @@ public class ChatController {
      */
     @GetMapping(value = "/sendMessage")
     @MessageMapping("/sendMessage")
-    public void sendMessage(ChatMessage message) throws Exception {
+    public void sendMessage(ChatMessage message) {
         logger.debug("ChatController.sendMessage : Received message from Web Browser using STOMP Client and further sending it to a KAFKA Topic");
         producer.send(message.getSender()
                 + "-" + message.getContent()
