@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,11 +22,23 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/", "/auth/**").permitAll()
+                .antMatchers("/css/**", "/icons/**", "/js/**", "/fonts/**").permitAll()
                 .anyRequest().authenticated()
-                .and().httpBasic()
-                .and().csrf().disable()
-                .formLogin().disable();
+                .and()
+                .httpBasic()
+                .and()
+                .csrf().disable()
+                .formLogin()
+                .loginPage("/")
+                .usernameParameter("email")
+                .passwordParameter("password")
+                .permitAll()
+                .successForwardUrl("/im")
+                .failureForwardUrl("/")
+                .and()
+                .logout()
+                .permitAll()
+                .logoutSuccessUrl("/");
     }
 
     /**
@@ -49,4 +62,5 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .password("$2y$10$LKR2johV8BDiMeA/cga2Yut3VU7ZmsPr3cOgBsJEnbFfKZTHeMUYq")
                 .roles("USER");
     }
+
 }
