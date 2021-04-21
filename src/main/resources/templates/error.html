@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Error page</title>
+    <meta charset="utf-8"/>
+    <link rel="icon"
+          type="image/png"
+          href="../static/icons/logo.png"
+          th:href="@{/icons/logo.png}"/>
+    <link rel="stylesheet"
+          type="text/css"
+          href="../static/fonts/font-awesome-4.7.0/css/font-awesome.min.css"
+          th:href="@{/fonts/font-awesome-4.7.0/css/font-awesome.min.css}">
+    <link rel="stylesheet"
+          type="text/css"
+          href="../static/css/util.css"
+          th:href="@{/css/util.css}">
+    <link rel="stylesheet"
+          type="text/css"
+          href="../static/css/login.css"
+          th:href="@{/css/login.css}">
+</head>
+<body>
+<div class="limiter">
+    <div class="container-login100">
+        <div class="wrap-login100 p-t-50 p-b-90">
+            <form class="login100-form validate-form flex-sb flex-w">
+                <span class="login100-form-title p-b-31">
+						Unexpected Error ❤️✖️🤖
+                </span>
+                <!--
+                <span class="login100-form-title p-b-31">
+                        <th:with="httpStatus=${T(org.springframework.http.HttpStatus).valueOf(#response.status)}">
+                </span>
+
+                <span class="login100-form-title p-b-31">
+                         <h1 th:text="|${httpStatus} - ${httpStatus.reasonPhrase}|">404</h1>
+                </span>
+                -->
+
+                <span class="login100-form-title p-b-31">
+                    <p th:text="${path}"></p>
+                </span>
+                <span class="login100-form-title p-b-31">
+                    <p th:text="${error}"></p>
+                </span>
+                <span class="login100-form-title p-b-31">
+                    <p th:text="${status}"></p>
+                </span>
+                <span class="login100-form-title p-b-31">
+                    <p th:text="${message}"></p>
+                </span>
+                <span class="login100-form-title p-b-31">
+                    <p th:text="${exception}"></p>
+                </span>
+
+
+                <span class="login100-form-title p-b-31">
+                    <a href="loginform.html" th:href="@{loginform.html}">Back to Home Page</a>
+                </span>
+
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

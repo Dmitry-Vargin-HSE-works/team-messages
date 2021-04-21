@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>Chat</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon"
+          type="image/png"
+          href="../static/icons/chat.png"
+          th:href="@{/icons/chat.png}"/>
+    <link rel='stylesheet prefetch' href='https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css'>
+    <link rel="stylesheet"
+          href="../static/css/chat.css"
+          th:href="@{/css/chat.css}"
+          media="screen"
+          type="text/css"/>
+</head>
+<body>
+<div class="window-wrapper">
+    <div class="window-title">
+        <div class="dots">
+            <i class="fa fa-circle"></i>
+            <i class="fa fa-circle"></i>
+            <i class="fa fa-circle"></i>
+        </div>
+    </div>
+    <div class="window-area">
+        <div class="conversation-list">
+            <ul class="">
+                <li class="item active"><a href="#"><i class="fa fa-user"></i><span>Название группы</span><i
+                        class="fa fa-times"></i></a></li>
+                <li><a href="#"><i class="fa fa-circle-o online"></i></i><span>Иванов Иван</span><i
+                        class="fa fa-times"></i></a></li>
+                <li><a href="#"><i class="fa fa-circle-o offline"></i></i><span>Петров Петр</span><i
+                        class="fa fa-times"></i></a></li>
+            </ul>
+            <div class="my-account">
+                <div class="image">
+                    <img src="../static/icons/img.png"
+                    th:src="@{/icons/img.png}">
+                    <i class="fa fa-circle online"></i>
+                </div>
+                <div class="name">
+                    <span>Имя Фамилия</span>
+                    <i class="fa fa-angle-down"></i>
+                    <span class="availability">В сети</span>
+                </div>
+            </div>
+        </div>
+        <div class="chat-area">
+            <div class="title"><b>Название группы</b></i></div>
+            <div class="chat-list"></div>
+            <div class="input-area">
+                <div class="input-wrapper">
+                    <input type="text" placeholder="Введите сообщение...">
+                </div>
+                <input type="button" value="Ввод" class="send-btn">
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
