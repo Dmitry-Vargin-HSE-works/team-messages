@@ -39,4 +39,6 @@ logging:
     org.springframework.web: debug
   file:
     name: logs/application-debug.log
+    clean-history-on-start: true
+
 message-topic: main
