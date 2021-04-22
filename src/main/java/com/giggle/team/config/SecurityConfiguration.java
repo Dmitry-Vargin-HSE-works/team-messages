@@ -22,7 +22,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/css/**", "/icons/**", "/js/**", "/fonts/**").permitAll()
+                .antMatchers("/css/**", "/icons/**", "/js/**", "/fonts/**",
+                        "/login", "/", "/error", "/api/v1/users").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic()
@@ -46,8 +47,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
      * https://reflectoring.io/spring-security-password-handling/
      */
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(10);
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
 
