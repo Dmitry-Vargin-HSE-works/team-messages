@@ -37,7 +37,6 @@
                          <h1 th:text="|${httpStatus} - ${httpStatus.reasonPhrase}|">404</h1>
                 </span>
                 -->
-
                 <span class="login100-form-title p-b-31">
                     <p th:text="${path}"></p>
                 </span>
@@ -53,10 +52,8 @@
                 <span class="login100-form-title p-b-31">
                     <p th:text="${exception}"></p>
                 </span>
-
-
                 <span class="login100-form-title p-b-31">
-                    <a href="loginform.html" th:href="@{loginform.html}">Back to Home Page</a>
+                    <a href="loginform.html" th:href="@{}">Back to Home Page</a>
                 </span>
 
             </form>
