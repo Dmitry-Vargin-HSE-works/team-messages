@@ -20,8 +20,8 @@ jobs:
         run: chmod +x gradlew
       - name: Building by Gradle
         run: ./gradlew build
-      - name: Searching for *.jar
-        run: ls
+      - name: Moving *.jar
+        run: cp build/libs/*.jar Team.jar
       - name: Uploading jar artifact
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
