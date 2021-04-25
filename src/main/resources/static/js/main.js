@@ -10,42 +10,35 @@ var connectingElement = document.querySelector('.connecting');
 
 var stompClient = null;
 var username = null;
-var chatName = null;
 
 var colors = ['#2196F3', '#32c787', '#00BCD4', '#ff5652', '#ffc107',
     '#ff85af', '#FF9800', '#39bbb0'];
 
 function connect(event) {
     username = document.querySelector('#name').value.trim();
-    chatName = document.querySelector("#chat-name").value.trim();
-    if (username && chatName) {
+
+    if (username) {
         usernamePage.classList.add('hidden');
         chatPage.classList.remove('hidden');
+
         var socket = new SockJS('/ws');
         stompClient = Stomp.over(socket);
+
         stompClient.connect({}, onConnected, onError);
     }
     event.preventDefault();
 }
 
 function onConnected() {
-    // Subscribe to the main chat
-    stompClient.subscribe('/topic/user/' + username + "/main", onMessageReceived);
-    document.getElementById("chat-title").textContent = chatName;
+    // Subscribe to the Public Topic
+    stompClient.subscribe('/topic/public', onMessageReceived);
 
     // Tell your username to the server
     stompClient.send("/app/chat.addUser", {}, JSON.stringify({
         sender: username,
-    //    chatname: chatName,
         type: 'JOIN'
     }))
-    stompClient.send("/app/chat.join", {}, JSON.stringify({
-        chatId: "main",
-        sender: username,
-      //  chatname: chatName,
-        content: "",
-        type: 'SYSTEM'
-    }))
+
     connectingElement.classList.add('hidden');
 }
 
@@ -55,13 +48,12 @@ function onError(error) {
 }
 
 function sendMessage(event) {
+    alert("Sending message from web browser -- > Server");
     var messageContent = messageInput.value.trim();
     if (messageContent && stompClient) {
         var chatMessage = {
-            chatId: "main",
             sender: username,
             content: messageInput.value,
-           // chatname: chatName,
             type: 'CHAT'
         };
         stompClient.send("/app/sendMessage", {}, JSON
@@ -73,7 +65,9 @@ function sendMessage(event) {
 
 function onMessageReceived(payload) {
     var message = JSON.parse(payload.body);
+
     var messageElement = document.createElement('li');
+
     if (message.type === 'JOIN') {
         messageElement.classList.add('event-message');
         message.content = message.sender + ' joined!';
@@ -86,16 +80,22 @@ function onMessageReceived(payload) {
         var avatarText = document.createTextNode(message.sender[0]);
         avatarElement.appendChild(avatarText);
         avatarElement.style['background-color'] = getAvatarColor(message.sender);
+
         messageElement.appendChild(avatarElement);
+
         var usernameElement = document.createElement('span');
         var usernameText = document.createTextNode(message.sender);
         usernameElement.appendChild(usernameText);
         messageElement.appendChild(usernameElement);
+
     }
+
     var textElement = document.createElement('p');
     var messageText = document.createTextNode(message.content);
     textElement.appendChild(messageText);
+
     messageElement.appendChild(textElement);
+
     messageArea.appendChild(messageElement);
     messageArea.scrollTop = messageArea.scrollHeight;
 }

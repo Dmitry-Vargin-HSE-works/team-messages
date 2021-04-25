@@ -3,63 +3,55 @@
 <head>
     <title>Chat</title>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!--
-    <link rel="icon"
-          type="image/png"
-          href="../static/icons/chat.png"
-          th:href="@{/icons/chat.png}"/>
-    -->
-    <link rel='stylesheet prefetch'
-          href='https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css'>
+    <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0" name="viewport">
     <link rel="stylesheet"
-          href="../static/css/chat.css"
-          th:href="@{/css/chat.css}"
-          media="screen"
-          type="text/css"/>
+          href="../static/css/main.css"
+          th:href="@{/css/main.css}"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="../static/js/main.js"
+            th:src="@{/js/main.js}"></script>
 </head>
 <body>
-<div class="window-wrapper">
-    <div class="window-title">
-        <div class="dots">
-            <i class="fa fa-circle"></i>
-            <i class="fa fa-circle"></i>
-            <i class="fa fa-circle"></i>
-        </div>
+<noscript>
+    <h2>Sorry! Your browser doesn't support Javascript</h2>
+</noscript>
+
+<div id="username-page">
+    <div class="username-page-container">
+        <h1 class="title">Type your username</h1>
+        <form id="usernameForm" name="usernameForm">
+            <div class="form-group">
+                <input autocomplete="off" class="form-control" id="name"
+                       placeholder="Username" type="text"/>
+            </div>
+            <div class="form-group">
+                <button class="accent username-submit" type="submit">Start
+                    Chatting
+                </button>
+            </div>
+        </form>
     </div>
-    <div class="window-area">
-        <div class="conversation-list">
-            <ul class="">
-                <li class="item active"><a href="#"><i class="fa fa-user"></i><span>Название группы</span><i
-                        class="fa fa-times"></i></a></li>
-                <li><a href="#"><i class="fa fa-circle-o online"></i></i><span>Иванов Иван</span><i
-                        class="fa fa-times"></i></a></li>
-                <li><a href="#"><i class="fa fa-circle-o offline"></i></i><span>Петров Петр</span><i
-                        class="fa fa-times"></i></a></li>
-            </ul>
-            <div class="my-account">
-                <div class="image">
-                    <img src="../static/icons/img.png"
-                    th:src="@{/icons/img.png}">
-                    <i class="fa fa-circle online"></i>
-                </div>
-                <div class="name">
-                    <span>Имя Фамилия</span>
-                    <i class="fa fa-angle-down"></i>
-                    <span class="availability">В сети</span>
+</div>
+
+<div class="hidden" id="chat-page">
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>Spring-Kafka Chat Demo</h2>
+        </div>
+        <div class="connecting">Connecting...</div>
+        <ul id="messageArea">
+
+        </ul>
+        <form id="messageForm" name="messageForm">
+            <div class="form-group">
+                <div class="input-group clearfix">
+                    <input autocomplete="off" class="form-control" id="message"
+                           placeholder="Type a message..." type="text"/>
+                    <button class="primary" type="submit">Send</button>
                 </div>
             </div>
-        </div>
-        <div class="chat-area">
-            <div class="title"><b>Название группы</b></i></div>
-            <div class="chat-list"></div>
-            <div class="input-area">
-                <div class="input-wrapper">
-                    <input type="text" placeholder="Введите сообщение...">
-                </div>
-                <input type="button" value="Ввод" class="send-btn">
-            </div>
-        </div>
+        </form>
     </div>
 </div>
 </body>
