@@ -1,6 +1,6 @@
 package com.giggle.team.controller;
 
-import com.giggle.team.listener.UserListener;
+import com.giggle.team.listener.UserListenerContainer;
 import com.giggle.team.models.ChatMessage;
 import com.giggle.team.services.KafkaProducer;
 import org.slf4j.Logger;
@@ -28,12 +28,12 @@ public class ChatController {
     private final ConcurrentKafkaListenerContainerFactory<String, String> factory;
     private final SimpMessagingTemplate template;
     private final KafkaProducer producer;
-    private final Map<String, ArrayList<UserListener>> listenersMap;
+    private final Map<String, ArrayList<UserListenerContainer>> listenersMap;
 
     @Value("${message-topic}")
     private String kafkaTopic;
 
-    public ChatController(ConcurrentKafkaListenerContainerFactory<String, String> factory, SimpMessagingTemplate template, KafkaProducer producer, Map<String, ArrayList<UserListener>> listenersMap) {
+    public ChatController(ConcurrentKafkaListenerContainerFactory<String, String> factory, SimpMessagingTemplate template, KafkaProducer producer, Map<String, ArrayList<UserListenerContainer>> listenersMap) {
         this.factory = factory;
         this.template = template;
         this.producer = producer;
@@ -92,14 +92,14 @@ public class ChatController {
             listenersMap.put(chatMessage.getSender(), new ArrayList<>());
             logger.info("Creating listener for " + chatMessage.getSender());
             listenersMap.get(chatMessage.getSender()).add(
-                    new UserListener(kafkaTopic, chatMessage.getSender(), chatMessage.getChatId(), factory, template)
+                    new UserListenerContainer(kafkaTopic, chatMessage.getSender(), chatMessage.getChatId(), factory, template)
             );
         } else {
             if (!listenersMap.get(chatMessage.getSender()).contains(
-                    new UserListener(chatMessage.getSender(), chatMessage.getChatId()))) {
+                    new UserListenerContainer(chatMessage.getSender(), chatMessage.getChatId()))) {
                 logger.info("No already existing listener, creating new one");
                 listenersMap.get(chatMessage.getSender()).add(
-                        new UserListener(kafkaTopic, chatMessage.getSender(), chatMessage.getChatId(), factory, template)
+                        new UserListenerContainer(kafkaTopic, chatMessage.getSender(), chatMessage.getChatId(), factory, template)
                 );
             } else {
                 logger.info("Such listener already exists");

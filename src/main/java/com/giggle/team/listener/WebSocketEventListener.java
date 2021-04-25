@@ -17,10 +17,10 @@ import java.util.Map;
 public class WebSocketEventListener {
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocketEventListener.class);
-    private final Map<String, ArrayList<UserListener>> listenersMap;
+    private final Map<String, ArrayList<UserListenerContainer>> listenersMap;
     private final SimpMessageSendingOperations messagingTemplate;
 
-    public WebSocketEventListener(SimpMessageSendingOperations messagingTemplate, Map<String, ArrayList<UserListener>> listenersMap) {
+    public WebSocketEventListener(SimpMessageSendingOperations messagingTemplate, Map<String, ArrayList<UserListenerContainer>> listenersMap) {
         this.messagingTemplate = messagingTemplate;
         this.listenersMap = listenersMap;
     }
@@ -31,6 +31,9 @@ public class WebSocketEventListener {
                 "WebSocketEventListener.handleWebSocketConnectListener:: NEW USER ADDED : Received a new web socket connection");
     }
 
+    /**
+     * Removing all of the user`s listeners on it disconnection from websocket
+     */
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
         logger.info("WebSocketEventListener.handleWebSocketDisconnectListener");
@@ -41,7 +44,8 @@ public class WebSocketEventListener {
             for (int i = 0; i < listenersMap.get(username).size(); i++) {
                 listenersMap.get(username).get(i).stopContainer();
             }
-            logger.info("User Disconnected : " + username);
+            listenersMap.remove(username);
+            logger.info("User Disconnected : " + username, ", Listeners Removed");
             ChatMessage chatMessage = new ChatMessage();
             chatMessage.setType(ChatMessage.MessageType.LEAVE);
             chatMessage.setSender(username);
