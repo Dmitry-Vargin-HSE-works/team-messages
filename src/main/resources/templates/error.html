@@ -28,15 +28,6 @@
                 <span class="login100-form-title p-b-31">
 						Unexpected Error ❤️✖️🤖
                 </span>
-                <!--
-                <span class="login100-form-title p-b-31">
-                        <th:with="httpStatus=${T(org.springframework.http.HttpStatus).valueOf(#response.status)}">
-                </span>
-
-                <span class="login100-form-title p-b-31">
-                         <h1 th:text="|${httpStatus} - ${httpStatus.reasonPhrase}|">404</h1>
-                </span>
-                -->
                 <span class="login100-form-title p-b-31">
                     <p th:text="${path}"></p>
                 </span>
@@ -52,10 +43,6 @@
                 <span class="login100-form-title p-b-31">
                     <p th:text="${exception}"></p>
                 </span>
-                <span class="login100-form-title p-b-31">
-                    <a href="loginform.html" th:href="@{}">Back to Home Page</a>
-                </span>
-
             </form>
         </div>
     </div>

@@ -16,7 +16,7 @@ public class HomepageController {
         this.userDetailsService = userDetailsService;
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @RequestMapping(value = "/loginform.html", method = RequestMethod.GET)
     public String loginform() {
         return "loginform.html";
     }
@@ -29,7 +29,7 @@ public class HomepageController {
                 userDetailsService.isPasswordCorrect(user, password) ? "/chatform.html" : "/loginform.html";
     }
 
-    @RequestMapping(value = "/im", method = RequestMethod.GET)
+    @RequestMapping(value = "/chatform.html", method = RequestMethod.GET)
     public String chatform() {
         return "/chatform.html";
     }

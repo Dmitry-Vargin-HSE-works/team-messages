@@ -5,10 +5,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableConfigurationProperties
@@ -23,23 +21,23 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/css/**", "/icons/**", "/js/**", "/fonts/**",
-                        "/login", "/", "/error", "/api/v1/users").permitAll()
+                        "/login", "/", "/error.html", "/api/v1/users").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic()
                 .and()
                 .csrf().disable()
                 .formLogin()
-                .loginPage("/")
+                .loginPage("/loginform.html")
                 .usernameParameter("email")
                 .passwordParameter("password")
                 .permitAll()
-                .successForwardUrl("/im")
-                .failureForwardUrl("/")
+                .successForwardUrl("/chatform.html")
+                .failureForwardUrl("/loginform.html")
                 .and()
                 .logout()
                 .permitAll()
-                .logoutSuccessUrl("/");
+                .logoutSuccessUrl("/loginform.html");
     }
 
     /**
