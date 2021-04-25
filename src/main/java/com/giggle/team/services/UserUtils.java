@@ -2,29 +2,24 @@ package com.giggle.team.services;
 
 import com.giggle.team.models.User;
 import com.giggle.team.repositories.UserRepository;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserDetailsService {
+public class UserUtils {
 
     private final BCryptPasswordEncoder encoder;
 
-    private final AuthenticationManagerBuilder builder;
-
     private final UserRepository userRepository;
 
-    public UserDetailsService(BCryptPasswordEncoder encoder,
-                              AuthenticationManagerBuilder builder,
-                              UserRepository userRepository) {
+    public UserUtils(BCryptPasswordEncoder encoder,
+                     UserRepository userRepository) {
         this.encoder = encoder;
-        this.builder = builder;
         this.userRepository = userRepository;
     }
 
-    public User findUserByEmail(String email) {
-        return userRepository.findByEmail(email).orElse(null);
+    public User findUserByUsername(String username) {
+        return userRepository.findByUsername(username).orElse(null);
     }
 
     public boolean isPasswordCorrect(User user, String password) {
@@ -32,12 +27,13 @@ public class UserDetailsService {
     }
 
     public boolean saveUser(User user) {
-        if (user == null || user.getEmail() == null ||
-                user.getEmail().isEmpty() ||
-                findUserByEmail(user.getEmail()) != null) return false;
+        if (user == null || user.getUsername() == null ||
+                user.getUsername().isEmpty() ||
+                findUserByUsername(user.getUsername()) != null) return false;
         user.setPassword(encoder.encode(user.getPassword()));
         userRepository.save(user);
         return true;
     }
+
 
 }
