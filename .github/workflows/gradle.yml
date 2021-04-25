@@ -12,18 +12,15 @@ jobs:
     steps:
       - name: Getting sources
         uses: actions/checkout@v2
-      - name: Setting up JDK 11
+      - name: Setting up JDK
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: Granting permission
-        run: chmod +x gradlew
       - name: Building by Gradle
-        run: ./gradlew build
-      - name: Uploading Jar
+        run: chmod +x gradlew && ./gradlew build && mv build/libs/*.jar Team.jar
+      - name: Realising Jar
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
-          run: cp build/libs/*.jar Team.jar
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "latest"
           prerelease: true
