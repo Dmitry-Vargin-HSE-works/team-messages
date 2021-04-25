@@ -20,13 +20,13 @@ jobs:
         run: chmod +x gradlew
       - name: Building by Gradle
         run: ./gradlew build
-      - name: Uploading jar artifact
+      - name: Uploading Jar
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
+          run: cp build/libs/*.jar Team.jar
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "latest"
           prerelease: true
           title: "Development Build"
-          path: build/libs
           files: |
             *.jar
