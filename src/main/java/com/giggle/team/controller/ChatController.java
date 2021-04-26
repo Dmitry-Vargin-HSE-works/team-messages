@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -85,21 +86,21 @@ public class ChatController {
      * Each listener will send received message to specific STOMP topic
      */
     @MessageMapping("/chat.join")
-    public void joinChat(@Payload ChatMessage chatMessage) {
-        logger.info("Received request for listener creation");
-        if (!listenersMap.containsKey(chatMessage.getSender())) {
+    public void joinChat(Principal principal, @Payload ChatMessage chatMessage) {
+        logger.info("Received request for listener creation from " + principal.getName());
+        if (!listenersMap.containsKey(principal.getName())) {
             logger.info("User's list of listeners not exist, creating new one");
-            listenersMap.put(chatMessage.getSender(), new ArrayList<>());
-            logger.info("Creating listener for " + chatMessage.getSender());
-            listenersMap.get(chatMessage.getSender()).add(
-                    new UserListenerContainer(kafkaTopic, chatMessage.getSender(), chatMessage.getChatId(), factory, template)
+            listenersMap.put(principal.getName(), new ArrayList<>());
+            logger.info("Creating listener for " + principal.getName());
+            listenersMap.get(principal.getName()).add(
+                    new UserListenerContainer(kafkaTopic, principal.getName(), chatMessage.getChatId(), factory, template)
             );
         } else {
-            if (!listenersMap.get(chatMessage.getSender()).contains(
-                    new UserListenerContainer(chatMessage.getSender(), chatMessage.getChatId()))) {
+            if (!listenersMap.get(principal.getName()).contains(
+                    new UserListenerContainer(principal.getName(), chatMessage.getChatId()))) {
                 logger.info("No already existing listener, creating new one");
-                listenersMap.get(chatMessage.getSender()).add(
-                        new UserListenerContainer(kafkaTopic, chatMessage.getSender(), chatMessage.getChatId(), factory, template)
+                listenersMap.get(principal.getName()).add(
+                        new UserListenerContainer(kafkaTopic, principal.getName(), chatMessage.getChatId(), factory, template)
                 );
             } else {
                 logger.info("Such listener already exists");
