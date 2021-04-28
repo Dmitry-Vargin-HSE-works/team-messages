@@ -6,7 +6,6 @@ import com.giggle.team.models.User;
 import com.giggle.team.repositories.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessagingException;
@@ -21,8 +20,11 @@ import java.util.Objects;
 @Service
 public class SubscriptionInterceptor implements ChannelInterceptor {
 
-  @Autowired
-  UserRepository repository;
+  private final UserRepository repository;
+
+  public SubscriptionInterceptor(UserRepository repository) {
+    this.repository = repository;
+  }
 
   private static final Logger logger = LoggerFactory.getLogger(SubscriptionInterceptor.class);
 
@@ -41,13 +43,13 @@ public class SubscriptionInterceptor implements ChannelInterceptor {
         throw new MessagingException("Not authenticated");
       }
     }
-    logger.info("Access to " + headerAccessor.getDestination() + "granted");
+    logger.info("Access to " + headerAccessor.getDestination() + " granted");
     return message;
   }
 
   private boolean checkStompDestination(Principal principal, String stompDestination) {
     User user = repository.findByUsername(principal.getName()).orElse(null);
-    if (user != null) {
+    if (user != null && user.getTopics() != null) {
       for (Topic topic :
               user.getTopics()) {
         if (topic.getStompDestination().equals(stompDestination)) {
