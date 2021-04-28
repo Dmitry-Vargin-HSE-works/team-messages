@@ -36,13 +36,13 @@ function onConnected() {
     // Tell your username to the server
     stompClient.send("/app/chat.addUser", {}, JSON.stringify({
         sender: username,
-    //    chatname: chatName,
+        //    chatname: chatName,
         type: 'JOIN'
     }))
     stompClient.send("/app/chat.join", {}, JSON.stringify({
         chatId: "main",
         sender: username,
-      //  chatname: chatName,
+        //  chatname: chatName,
         content: "",
         type: 'SYSTEM'
     }))
@@ -61,7 +61,7 @@ function sendMessage(event) {
             chatId: "main",
             sender: username,
             content: messageInput.value,
-           // chatname: chatName,
+            // chatname: chatName,
             type: 'CHAT'
         };
         stompClient.send("/app/sendMessage", {}, JSON

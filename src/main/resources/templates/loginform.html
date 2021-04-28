@@ -4,12 +4,6 @@
     <title>Hello 👋</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!--
-    <link rel="icon"
-          type="image/png"
-          href="../static/icons/logo.png"
-          th:href="@{/icons/logo.png}"/>
-    -->
     <link rel="stylesheet"
           type="text/css"
           href="../static/fonts/font-awesome-4.7.0/css/font-awesome.min.css"
@@ -28,14 +22,14 @@
     <div class="container-login100">
         <div class="wrap-login100 p-t-50 p-b-90">
             <form class="login100-form validate-form flex-sb flex-w"
-                  th:action="@{/login}"
+                  th:action="@{/loginform.html}"
                   method="post">
 					<span class="login100-form-title p-b-31">
 						Hello 👋
 					</span>
 
                 <div class="wrap-input100 validate-input m-b-20" data-validate="Username is required">
-                    <input class="input100" type="text" name="email" placeholder="E-mail"
+                    <input class="input100" name="username" placeholder="E-mail" type="text"
                            th:required="required">
                     <span class="focus-input100"></span>
                 </div>

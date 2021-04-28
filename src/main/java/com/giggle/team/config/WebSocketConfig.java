@@ -1,6 +1,8 @@
 package com.giggle.team.config;
 
+import com.giggle.team.services.SubscriptionInterceptor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
@@ -9,6 +11,12 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+
+  private final SubscriptionInterceptor subscriptionInterceptor;
+
+  public WebSocketConfig(SubscriptionInterceptor subscriptionInterceptor) {
+    this.subscriptionInterceptor = subscriptionInterceptor;
+  }
 
 	/**
 	 * Registering a websocket endpoint that the clients will use to connect to our
@@ -29,5 +37,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.setApplicationDestinationPrefixes("/app");
         registry.enableSimpleBroker("/topic");
     }
-    
+
+  @Override
+  public void configureClientInboundChannel(ChannelRegistration registration) {
+    registration.interceptors(subscriptionInterceptor);
+  }
+
 }

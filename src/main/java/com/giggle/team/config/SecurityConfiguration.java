@@ -1,67 +1,60 @@
 package com.giggle.team.config;
 
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import com.giggle.team.services.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
+/*
+ * how to setup security roles
+ * https://www.marcobehler.com/guides/spring-security#_authorization_with_spring_security
+ */
 
 @Configuration
-@EnableConfigurationProperties
+@EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    /**
-     * more about spring security
-     * https://mainul35.medium.com/spring-mvc-spring-security-in-memory-user-details-configuration-90d106b53d23
-     */
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-                .authorizeRequests()
-                .antMatchers("/css/**", "/icons/**", "/js/**", "/fonts/**",
-                        "/login", "/", "/error", "/api/v1/users").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .httpBasic()
-                .and()
-                .csrf().disable()
-                .formLogin()
-                .loginPage("/")
-                .usernameParameter("email")
-                .passwordParameter("password")
-                .permitAll()
-                .successForwardUrl("/im")
-                .failureForwardUrl("/")
-                .and()
-                .logout()
-                .permitAll()
-                .logoutSuccessUrl("/");
-    }
-
-    /**
-     * about password encoders
-     * https://reflectoring.io/spring-security-password-handling/
-     */
     @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
+    public BCryptPasswordEncoder getPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    public UserDetailsService getUserDetailsService() {
+        return new UserService();
+    }
 
     @Override
     public void configure(AuthenticationManagerBuilder builder) throws Exception {
-        builder.inMemoryAuthentication()
-                .withUser("admin")
-                .password("$2y$10$LKR2johV8BDiMeA/cga2Yut3VU7ZmsPr3cOgBsJEnbFfKZTHeMUYq")
-                .roles("ADMIN");
-        builder.inMemoryAuthentication()
-                .withUser("spring")
-                .password("$2y$10$LKR2johV8BDiMeA/cga2Yut3VU7ZmsPr3cOgBsJEnbFfKZTHeMUYq")
-                .roles("USER");
+        builder
+                .userDetailsService(getUserDetailsService())
+                .passwordEncoder(getPasswordEncoder());
     }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+                .antMatchers(HttpMethod.POST, "/api/v1/users", "/loginform.html").permitAll()
+                .antMatchers(HttpMethod.GET, "/css/**", "/icons/**", "/js/**", "/fonts/**",
+                        "/error.html", "/api/v1/users", "/loginform.html").permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .formLogin().loginPage("/loginform.html")
+                .usernameParameter("username")
+                .passwordParameter("password").permitAll()
+                .and()
+                .logout().permitAll().logoutSuccessUrl("/loginform.html")
+                .and()
+                .httpBasic()
+                .and()
+                .csrf().disable();
+    }
+
 
 }

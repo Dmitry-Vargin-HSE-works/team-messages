@@ -85,8 +85,9 @@ class UserListener implements ConsumerSeekAware, MessageListener<String, String>
         String[] message = data.value().split("-");
         if (message[0].equals(chat)) {
             logger.info("Got a new message for " + this.user + " ; From chat " + this.chat);
-            template.convertAndSend("/topic/user/" + user + "/" + chat,
+            template.convertAndSendToUser(this.user, "/queue/" + chat,
                     new ChatMessage(message[0], ChatMessage.MessageType.valueOf(message[1]), message[2], message[3]));
+            //template.convertAndSend("/topic/user/" + user + "/" + chat, new ChatMessage(message[0], ChatMessage.MessageType.valueOf(message[1]), message[2], message[3]));
         }
     }
 }
