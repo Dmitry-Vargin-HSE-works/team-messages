@@ -3,6 +3,7 @@ package com.giggle.team.controller;
 import com.giggle.team.listener.UserListenerContainer;
 import com.giggle.team.models.ChatMessage;
 import com.giggle.team.services.KafkaProducer;
+import com.giggle.team.services.UserUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.constraints.NotNull;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Map;
@@ -31,15 +31,17 @@ public class ChatController {
     private final SimpMessagingTemplate template;
     private final KafkaProducer producer;
     private final Map<String, ArrayList<UserListenerContainer>> listenersMap;
+    private final UserUtils userUtils;
 
     @Value("${message-topic}")
     private String kafkaTopic;
 
-    public ChatController(ConcurrentKafkaListenerContainerFactory<String, String> factory, SimpMessagingTemplate template, KafkaProducer producer, Map<String, ArrayList<UserListenerContainer>> listenersMap) {
+    public ChatController(ConcurrentKafkaListenerContainerFactory<String, String> factory, SimpMessagingTemplate template, KafkaProducer producer, Map<String, ArrayList<UserListenerContainer>> listenersMap, UserUtils userUtils) {
         this.factory = factory;
         this.template = template;
         this.producer = producer;
         this.listenersMap = listenersMap;
+        this.userUtils = userUtils;
     }
 
     /**
@@ -88,7 +90,7 @@ public class ChatController {
      */
     @MessageMapping("/chat.join")
     public void joinChat(Principal principal, @Payload ChatMessage chatMessage) {
-        if (principal != null) {
+        if (principal != null && userUtils.checkDestination(principal, chatMessage.getChatId())) {
             logger.info("Received request for listener creation from " + principal.getName());
             if (!listenersMap.containsKey(principal.getName())) {
                 logger.info("User's list of listeners not exist, creating new one");
@@ -108,6 +110,8 @@ public class ChatController {
                     logger.info("Such listener already exists");
                 }
             }
+        } else{
+            logger.info("Received request for listener creation but access denied or principal is null");
         }
     }
 
