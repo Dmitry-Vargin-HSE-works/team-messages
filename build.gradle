@@ -29,6 +29,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.kafka:spring-kafka'
 
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+
     implementation 'tomcat:tomcat-apr:5.5.23'
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
