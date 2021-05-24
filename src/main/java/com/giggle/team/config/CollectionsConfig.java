@@ -10,8 +10,10 @@ import java.util.Map;
 
 @Configuration
 public class CollectionsConfig {
+
     @Bean
     public Map<String, ArrayList<UserListenerContainer>> listenersMap(){
         return new HashMap<>();
     }
+
 }
