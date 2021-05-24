@@ -1,7 +1,7 @@
 package com.giggle.team.controller;
 
 import com.giggle.team.listener.UserListenerContainer;
-import com.giggle.team.models.ChatMessage;
+import com.giggle.team.models.Message;
 import com.giggle.team.services.KafkaProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.constraints.NotNull;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Map;
@@ -48,7 +47,7 @@ public class ChatController {
      */
     @MessageMapping("/sendMessage")
     @RequestMapping(value = "/sendMessage", method = RequestMethod.GET, produces = "application/json")
-    public void sendMessage(ChatMessage message) {
+    public void sendMessage(Message message) {
         logger.debug("ChatController.sendMessage : Received message from Web Browser using STOMP Client and further sending it to a KAFKA Topic");
         /*
          * Проверять с помощью авторизации доступен ли нужный чат
@@ -56,7 +55,7 @@ public class ChatController {
          *
          * fixme @Stanislav comment userRepository.find(message.getUser).map(...).orElseGet(() -> new ResponseEntity(HttpStatus.FORBIDDEN))
          */
-        producer.send(message.getChatId() + "-" + ChatMessage.MessageType.valueOf(message.getType().name()) + "-" + message.getContent() + "-"
+        producer.send(message.getChatId() + "-" + Message.MessageType.valueOf(message.getType().name()) + "-" + message.getContent() + "-"
                 + message.getSender());
     }
 
@@ -65,7 +64,7 @@ public class ChatController {
      */
     @MessageMapping("/chat.addUser")
     @SendTo("/topic/public")
-    public ChatMessage addUser(@Payload ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
+    public Message addUser(@Payload Message message, SimpMessageHeaderAccessor headerAccessor) {
         logger.debug("added username in web socket session");
         // Add username in web socket session
 
@@ -73,12 +72,12 @@ public class ChatController {
         assert (headerAccessor != null);
         assert (headerAccessor.getSessionAttributes() != null);
 
-        if (chatMessage == null || chatMessage.getSender() == null || chatMessage.getSender().isEmpty()) {
+        if (message == null || message.getSender() == null || message.getSender().isEmpty()) {
             headerAccessor.getSessionAttributes().put("username", "unknown");
         } else {
-            headerAccessor.getSessionAttributes().put("username", chatMessage.getSender());
+            headerAccessor.getSessionAttributes().put("username", message.getSender());
         }
-        return chatMessage;
+        return message;
     }
 
     /**
@@ -87,7 +86,7 @@ public class ChatController {
      * Each listener will send received message to specific STOMP topic
      */
     @MessageMapping("/chat.join")
-    public void joinChat(Principal principal, @Payload ChatMessage chatMessage) {
+    public void joinChat(Principal principal, @Payload Message message) {
         if (principal != null) {
             logger.info("Received request for listener creation from " + principal.getName());
             if (!listenersMap.containsKey(principal.getName())) {
@@ -95,14 +94,14 @@ public class ChatController {
                 listenersMap.put(principal.getName(), new ArrayList<>());
                 logger.info("Creating listener for " + principal.getName());
                 listenersMap.get(principal.getName()).add(
-                        new UserListenerContainer(kafkaTopic, principal.getName(), chatMessage.getChatId(), factory, template)
+                        new UserListenerContainer(kafkaTopic, principal.getName(), message.getChatId(), factory, template)
                 );
             } else {
                 if (!listenersMap.get(principal.getName()).contains(
-                        new UserListenerContainer(principal.getName(), chatMessage.getChatId()))) {
+                        new UserListenerContainer(principal.getName(), message.getChatId()))) {
                     logger.info("No already existing listener, creating new one");
                     listenersMap.get(principal.getName()).add(
-                            new UserListenerContainer(kafkaTopic, principal.getName(), chatMessage.getChatId(), factory, template)
+                            new UserListenerContainer(kafkaTopic, principal.getName(), message.getChatId(), factory, template)
                     );
                 } else {
                     logger.info("Such listener already exists");

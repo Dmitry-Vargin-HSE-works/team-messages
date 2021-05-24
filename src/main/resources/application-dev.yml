@@ -36,7 +36,8 @@ server:
 logging:
   level:
     root: info
-    org.springframework.web: debug
+    org.springframework.web: warn
+    org.springframework.security: debug
   file:
     name: logs/application-debug.log
     clean-history-on-start: true

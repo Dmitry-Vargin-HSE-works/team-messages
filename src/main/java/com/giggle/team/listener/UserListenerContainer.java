@@ -1,6 +1,6 @@
 package com.giggle.team.listener;
 
-import com.giggle.team.models.ChatMessage;
+import com.giggle.team.models.Message;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.TopicPartition;
 import org.slf4j.Logger;
@@ -61,6 +61,7 @@ public class UserListenerContainer {
  * Implementing ConsumerSeekAware to be able to set offset in kafka topic to 0 for each new listener
  **/
 class UserListener implements ConsumerSeekAware, MessageListener<String, String> {
+
     SimpMessagingTemplate template;
     String chat, user;
     Logger logger;
@@ -86,7 +87,7 @@ class UserListener implements ConsumerSeekAware, MessageListener<String, String>
         if (message[0].equals(chat)) {
             logger.info("Got a new message for " + this.user + " ; From chat " + this.chat);
             template.convertAndSendToUser(this.user, "/queue/" + chat,
-                    new ChatMessage(message[0], ChatMessage.MessageType.valueOf(message[1]), message[2], message[3]));
+                    new Message(message[0], Message.MessageType.valueOf(message[1]), message[2], message[3]));
             //template.convertAndSend("/topic/user/" + user + "/" + chat, new ChatMessage(message[0], ChatMessage.MessageType.valueOf(message[1]), message[2], message[3]));
         }
     }
