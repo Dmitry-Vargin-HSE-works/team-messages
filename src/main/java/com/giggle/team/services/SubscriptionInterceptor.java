@@ -2,6 +2,7 @@ package com.giggle.team.services;
 
 
 
+import com.giggle.team.utils.MessageUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.Message;
@@ -17,10 +18,10 @@ import java.util.Objects;
 @Service
 public class SubscriptionInterceptor implements ChannelInterceptor {
 
-  private final UserUtils userUtils;
+  private final MessageUtils messageUtils;
 
-  public SubscriptionInterceptor(UserUtils userUtils) {
-    this.userUtils = userUtils;
+  public SubscriptionInterceptor(MessageUtils messageUtils) {
+    this.messageUtils = messageUtils;
   }
 
   private static final Logger logger = LoggerFactory.getLogger(SubscriptionInterceptor.class);
@@ -32,7 +33,7 @@ public class SubscriptionInterceptor implements ChannelInterceptor {
       Principal principal = headerAccessor.getUser();
       if (principal != null) {
         logger.info("Got new request for subscription to " + headerAccessor.getDestination() + " from " + principal.getName());
-        if (!userUtils.checkDestination(principal, headerAccessor.getDestination())) {
+        if (!messageUtils.checkDestination(principal, headerAccessor.getDestination())) {
           logger.info("Requested destination is not available for this user");
           message = null;
         } else {

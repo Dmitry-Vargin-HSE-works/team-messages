@@ -3,7 +3,7 @@ package com.giggle.team.controller;
 import com.giggle.team.listener.UserListenerContainer;
 import com.giggle.team.models.Message;
 import com.giggle.team.services.KafkaProducer;
-import com.giggle.team.utils.UserUtils;
+import com.giggle.team.utils.MessageUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,21 +27,25 @@ public class ChatController {
 
     private static final Logger logger = LoggerFactory.getLogger(ChatController.class);
 
+    private final Map<String, ArrayList<UserListenerContainer>> listenersMap;
+
     private final ConcurrentKafkaListenerContainerFactory<String, String> factory;
+    private final MessageUtils messageUtils;
     private final SimpMessagingTemplate template;
     private final KafkaProducer producer;
-    private final Map<String, ArrayList<UserListenerContainer>> listenersMap;
-    private final UserUtils userUtils;
-
     @Value("${message-topic}")
     private String kafkaTopic;
 
-    public ChatController(ConcurrentKafkaListenerContainerFactory<String, String> factory, SimpMessagingTemplate template, KafkaProducer producer, Map<String, ArrayList<UserListenerContainer>> listenersMap) {
+    public ChatController(ConcurrentKafkaListenerContainerFactory<String, String> factory,
+                          Map<String, ArrayList<UserListenerContainer>> listenersMap,
+                          SimpMessagingTemplate template,
+                          KafkaProducer producer,
+                          MessageUtils messageUtils) {
         this.factory = factory;
+        this.listenersMap = listenersMap;
         this.template = template;
         this.producer = producer;
-        this.listenersMap = listenersMap;
-        this.userUtils = userUtils;
+        this.messageUtils = messageUtils;
     }
 
     /**
@@ -90,7 +94,7 @@ public class ChatController {
      */
     @MessageMapping("/chat.join")
     public void joinChat(Principal principal, @Payload Message message) {
-        if (principal != null && userUtils.checkDestination(principal, message.getChatId())) {
+        if (principal != null && messageUtils.checkDestination(principal, message.getChatId())) {
             logger.info("Received request for listener creation from " + principal.getName());
             if (!listenersMap.containsKey(principal.getName())) {
                 logger.info("User's list of listeners not exist, creating new one");
