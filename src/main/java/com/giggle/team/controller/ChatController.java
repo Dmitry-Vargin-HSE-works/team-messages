@@ -3,6 +3,7 @@ package com.giggle.team.controller;
 import com.giggle.team.listener.UserListenerContainer;
 import com.giggle.team.models.Message;
 import com.giggle.team.services.KafkaProducer;
+import com.giggle.team.utils.UserUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +31,7 @@ public class ChatController {
     private final SimpMessagingTemplate template;
     private final KafkaProducer producer;
     private final Map<String, ArrayList<UserListenerContainer>> listenersMap;
+    private final UserUtils userUtils;
 
     @Value("${message-topic}")
     private String kafkaTopic;
@@ -39,6 +41,7 @@ public class ChatController {
         this.template = template;
         this.producer = producer;
         this.listenersMap = listenersMap;
+        this.userUtils = userUtils;
     }
 
     /**
@@ -87,7 +90,7 @@ public class ChatController {
      */
     @MessageMapping("/chat.join")
     public void joinChat(Principal principal, @Payload Message message) {
-        if (principal != null) {
+        if (principal != null && userUtils.checkDestination(principal, message.getChatId())) {
             logger.info("Received request for listener creation from " + principal.getName());
             if (!listenersMap.containsKey(principal.getName())) {
                 logger.info("User's list of listeners not exist, creating new one");
@@ -107,9 +110,11 @@ public class ChatController {
                     logger.info("Such listener already exists");
                 }
             }
+        } else {
+            logger.info("Received request for listener creation but access denied or principal is null");
         }
     }
-
 }
+
 
 
