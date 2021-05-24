@@ -1,7 +1,7 @@
 package com.giggle.team.models;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.giggle.team.config.View;
+import com.giggle.team.utils.View;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,31 +20,23 @@ import java.util.TreeSet;
 @NoArgsConstructor
 @Setter
 @Getter
-public class User implements UserDetails {
+public class UserEntity implements UserDetails {
 
     @Id
     private ObjectId id;
-
     @JsonView(View.Rest.class)
-    private String name;
+    private String email;
     @JsonView(View.Rest.class)
     private String username;
     @JsonView(View.Rest.class)
     private String password;
-
     private TreeSet<Topic> topics;
 
-    public User(String username, String password) {
+    public UserEntity(String username, String password, String email) {
         this.username = username;
         this.password = password;
+        this.email = email;
     }
-
-    public User(String username, String password, String name) {
-        this.username = username;
-        this.password = password;
-        this.name = name;
-    }
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

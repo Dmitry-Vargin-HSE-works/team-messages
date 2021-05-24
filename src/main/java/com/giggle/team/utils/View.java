@@ -1,4 +1,4 @@
-package com.giggle.team.config;
+package com.giggle.team.utils;
 
 
 public class View {
