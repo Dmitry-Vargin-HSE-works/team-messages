@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+>
+<head>
+    <title>Admin</title>
+</head>
+<body>
+<h1>Admin Panel</h1>
+<h1>Hello [[${#httpServletRequest.remoteUser}]]!</h1>
+<form method="post" th:action="@{/logout}">
+    <input type="submit" value="Sign Out"/>
+</form>
+</body>
+</html>
