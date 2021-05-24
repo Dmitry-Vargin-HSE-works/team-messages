@@ -1,6 +1,6 @@
 package com.giggle.team.listener;
 
-import com.giggle.team.models.ChatMessage;
+import com.giggle.team.models.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
@@ -46,10 +46,10 @@ public class WebSocketEventListener {
             }
             listenersMap.remove(username);
             logger.info("User Disconnected : " + username, ", Listeners Removed");
-            ChatMessage chatMessage = new ChatMessage();
-            chatMessage.setType(ChatMessage.MessageType.LEAVE);
-            chatMessage.setSender(username);
-            messagingTemplate.convertAndSend("/topic/public", chatMessage);
+            Message message = new Message();
+            message.setType(Message.MessageType.LEAVE);
+            message.setSender(username);
+            messagingTemplate.convertAndSend("/topic/public", message);
         }
     }
 
