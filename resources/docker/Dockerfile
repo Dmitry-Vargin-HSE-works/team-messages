@@ -1,10 +1,10 @@
 FROM gradle:jdk11 as TEMP_BUILD_IMAGE
 FROM adoptopenjdk:11-jre-hotspot
 ENV APP_HOME=/usr/src/app/
-COPY . $APP_HOME
+COPY ../.. $APP_HOME
 WORKDIR $APP_HOME
 RUN ./gradlew build || return 0
-COPY . .
+COPY ../.. .
 RUN ./gradlew build
 
 FROM gradle:jdk11

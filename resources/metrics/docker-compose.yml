@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   grafana:
-    build: './config/grafana'
+    build: 'config/grafana'
     ports:
       - 3000:3000
     user: "$UID:$GID"
