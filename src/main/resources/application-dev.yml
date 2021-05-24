@@ -39,7 +39,7 @@ logging:
     org.springframework.web: warn
     org.springframework.security: debug
   file:
-    name: logs/application-debug.log
+    name: resources/logs/application-debug.log
     clean-history-on-start: true
 management:
   endpoints:
