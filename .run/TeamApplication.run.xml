@@ -1,9 +1,9 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Application" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
     <module name="team.main" />
+    <target name="amazoncorretto:11"/>
     <option name="SPRING_BOOT_MAIN_CLASS" value="com.giggle.team.TeamApplication" />
     <option name="ACTIVE_PROFILES" value="dev" />
-    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
     <option name="ALTERNATIVE_JRE_PATH" value="corretto-11" />
     <option name="SHORTEN_COMMAND_LINE" value="NONE" />
     <option name="UPDATE_ACTION_UPDATE_POLICY" value="UpdateClassesAndResources" />
