@@ -4,11 +4,7 @@ WORKDIR /home/gradle/src
 RUN gradle build --no-daemon
 
 FROM gradle:7.0.2-jdk11
-
-EXPOSE 8080
-
 RUN mkdir /app
-
 COPY --from=build /home/gradle/src/build/libs/*.jar /app/spring-chat.jar
-
+EXPOSE 8080
 ENTRYPOINT ["java", "-jar","/app/spring-chat.jar"]
