@@ -8,6 +8,6 @@ public class View {
     public static class Rest {
     }
 
-    public static class Internal {
+    public static class Messages {
     }
 }
