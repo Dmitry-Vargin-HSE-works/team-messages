@@ -26,7 +26,7 @@ public class UserEntity implements UserDetails {
     private ObjectId id;
     @JsonView(View.Rest.class)
     private String email;
-    @JsonView(View.Rest.class)
+    @JsonView({View.Rest.class, View.Messages.class})
     private String username;
     @JsonView(View.Rest.class)
     private String password;
