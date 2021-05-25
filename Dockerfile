@@ -1,16 +1,14 @@
-FROM gradle:jdk11 as TEMP_BUILD_IMAGE
-FROM adoptopenjdk:11-jre-hotspot
-ENV APP_HOME=/usr/src/app/
-COPY . $APP_HOME
-WORKDIR $APP_HOME
-RUN ./gradlew build || return 0
-COPY . .
-RUN ./gradlew build
+FROM gradle:7.0.2-jdk11 AS build
+COPY --chown=gradle:gradle . /home/gradle/src
+WORKDIR /home/gradle/src
+RUN gradle build --no-daemon
 
-FROM gradle:jdk11
-ENV ARTIFACT_NAME=your-application.jar
-ENV APP_HOME=/usr/app/
-WORKDIR $APP_HOME
-COPY --from=TEMP_BUILD_IMAGE $APP_HOME/build/libs/$ARTIFACT_NAME .
+FROM gradle:7.0.2-jdk11
+
 EXPOSE 8080
-CMD ["java","-jar", "$ARTIFACT_NAME"]
+
+RUN mkdir /app
+
+COPY --from=build /home/gradle/src/build/libs/*.jar /app/spring-chat.jar
+
+ENTRYPOINT ["java", "-jar","/app/spring-chat.jar"]
