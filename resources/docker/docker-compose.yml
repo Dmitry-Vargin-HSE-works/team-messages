@@ -34,4 +34,3 @@ services:
     container_name: spring-chat
     ports:
     - "8080:8080"
-

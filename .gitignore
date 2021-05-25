@@ -1,5 +1,18 @@
+### Gradle ###
 .gradle
-.idea
 build
+
+### IDEA ###
+*.iml
+
+### Logs ###
 logs
-out
+
+### Prometheus and Grafana ###
+/resources/metrics/grafana
+/resources/metrics/prometheus
+
+### Run Configuration ###
+/.idea/*
+!/.idea/runConfigurations/
+!/.idea/runConfigurations/*

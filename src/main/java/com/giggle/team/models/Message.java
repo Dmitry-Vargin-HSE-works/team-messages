@@ -1,6 +1,6 @@
 package com.giggle.team.models;
 
-public class ChatMessage {
+public class Message {
     private MessageType type;
     private String content;
     private String sender;
@@ -13,20 +13,20 @@ public class ChatMessage {
         LEAVE,
         SYSTEM
     }
-    
-    public ChatMessage() {
-		super();
-	}
 
-	public ChatMessage(String chatId, MessageType message, String content, String sender) {
-		super();
-		this.chatId = chatId;
-		this.type = message;
-		this.content = content;
-		this.sender = sender;
-	}
+    public Message() {
+        super();
+    }
 
-	public MessageType getType() {
+    public Message(String chatId, MessageType message, String content, String sender) {
+        super();
+        this.chatId = chatId;
+        this.type = message;
+        this.content = content;
+        this.sender = sender;
+    }
+
+    public MessageType getType() {
         return type;
     }
 
