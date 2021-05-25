@@ -5,6 +5,7 @@ import com.giggle.team.models.UserEntity;
 import com.giggle.team.repositories.UserRepository;
 import com.giggle.team.utils.View;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,5 +37,11 @@ public class UserController {
     @RequestMapping(value = "", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<UserEntity> entity() {
         return ResponseEntity.ok(new UserEntity(phrase, phrase, phrase));
+    }
+
+    @JsonView(View.Messages.class)
+    @RequestMapping(value = "/search", method = RequestMethod.GET, produces = "application/json")
+    public Page<UserEntity> persons(String query) {
+        return userRepository.findByUsernameStartsWith(query);
     }
 }
