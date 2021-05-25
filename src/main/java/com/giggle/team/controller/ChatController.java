@@ -56,12 +56,12 @@ public class ChatController {
   @RequestMapping(value = "/sendMessage", method = RequestMethod.GET, produces = "application/json")
   public void sendMessage(Principal principal, @Payload Message message) {
     if (principal != null && messageUtils.checkDestination(principal, message.getChatId())) {
-      logger.debug("Got new message from " + principal.getName() + " to " + message.getChatId());
+      logger.info("Got new message from " + principal.getName() + " to " + message.getChatId());
       producer.send(message.getChatId() + "-" + Message.MessageType.valueOf(message.getType().name())
               + "-" + message.getContent() + "-" + message.getSender());
-      logger.debug("Message to " + message.getChatId() + " from " + principal.getName() + " was sent");
+      logger.info("Message to " + message.getChatId() + " from " + principal.getName() + " was sent");
     }else {
-      logger.debug("Message to " + message.getChatId() + " was not sent");
+      logger.info("Message to " + message.getChatId() + " was not sent");
     }
   }
 

@@ -2,47 +2,37 @@
 
 var usernamePage = document.querySelector('#username-page');
 var chatPage = document.querySelector('#chat-page');
-var usernameForm = document.querySelector('#usernameForm');
 var messageForm = document.querySelector('#messageForm');
 var messageInput = document.querySelector('#message');
 var messageArea = document.querySelector('#messageArea');
 var connectingElement = document.querySelector('.connecting');
 
 var stompClient = null;
-var username = null;
 var chatName = null;
+let username = null;
 
 var colors = ['#2196F3', '#32c787', '#00BCD4', '#ff5652', '#ffc107',
     '#ff85af', '#FF9800', '#39bbb0'];
 
-function connect(event) {
-    username = document.querySelector('#name').value.trim();
-    chatName = document.querySelector("#chat-name").value.trim();
-    if (username && chatName) {
-        usernamePage.classList.add('hidden');
-        chatPage.classList.remove('hidden');
+function connect() {
+        chatName = "main";
+        //chatPage.classList.remove('hidden');
         var socket = new SockJS('/ws');
         stompClient = Stomp.over(socket);
         stompClient.connect({}, onConnected, onError);
-    }
-    event.preventDefault();
 }
 
 function onConnected() {
     // Subscribe to the main chat
-    stompClient.subscribe('/topic/user/' + username + "/main", onMessageReceived);
-    document.getElementById("chat-title").textContent = chatName;
+    let xhr = new XMLHttpRequest();
+    xhr.open('GET', '/whoami', false);
+    xhr.send();
+    username = xhr.responseText;
+    stompClient.subscribe('/user/' + username + '/queue/main', onMessageReceived);
+    // document.getElementById("chat-title").textContent = chatName;
 
-    // Tell your username to the server
-    stompClient.send("/app/chat.addUser", {}, JSON.stringify({
-        sender: username,
-        //    chatname: chatName,
-        type: 'JOIN'
-    }))
     stompClient.send("/app/chat.join", {}, JSON.stringify({
         chatId: "main",
-        sender: username,
-        //  chatname: chatName,
         content: "",
         type: 'SYSTEM'
     }))
@@ -109,5 +99,5 @@ function getAvatarColor(messageSender) {
     return colors[index];
 }
 
-usernameForm.addEventListener('submit', connect, true)
-messageForm.addEventListener('submit', sendMessage, true)
+messageForm.addEventListener('submit', sendMessage, true);
+connect();
