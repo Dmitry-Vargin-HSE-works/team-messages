@@ -5,7 +5,7 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  Build:
     runs-on: ubuntu-latest
     steps:
       - name: Getting sources
@@ -25,3 +25,15 @@ jobs:
           title: "Development Build"
           files: |
             *.jar
+  
+  
+  Deplloy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{secrets.DMITRY_API_KEY}}
+          heroku_app_name: "kafka-group-chat"
+          heroku_email: ${{secrets.DMITRY_HEROKU_EMAIL}}
+          

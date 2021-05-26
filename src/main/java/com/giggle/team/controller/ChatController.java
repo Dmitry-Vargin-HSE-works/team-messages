@@ -3,10 +3,12 @@ package com.giggle.team.controller;
 import com.giggle.team.listener.UserListenerContainer;
 import com.giggle.team.models.Message;
 import com.giggle.team.services.KafkaProducer;
+import com.giggle.team.utils.MessageUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -15,6 +17,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -24,92 +27,99 @@ import java.util.Map;
 @RequestMapping(value = "/kafka/chat")
 public class ChatController {
 
-    private static final Logger logger = LoggerFactory.getLogger(ChatController.class);
+  private static final Logger logger = LoggerFactory.getLogger(ChatController.class);
 
-    private final ConcurrentKafkaListenerContainerFactory<String, String> factory;
-    private final SimpMessagingTemplate template;
-    private final KafkaProducer producer;
-    private final Map<String, ArrayList<UserListenerContainer>> listenersMap;
+  private final Map<String, ArrayList<UserListenerContainer>> listenersMap;
 
-    @Value("${message-topic}")
-    private String kafkaTopic;
+  private final ConcurrentKafkaListenerContainerFactory<String, String> factory;
+  private final MessageUtils messageUtils;
+  private final SimpMessagingTemplate template;
+  private final KafkaProducer producer;
+  @Value("${message-topic}")
+  private String kafkaTopic;
 
-    public ChatController(ConcurrentKafkaListenerContainerFactory<String, String> factory, SimpMessagingTemplate template, KafkaProducer producer, Map<String, ArrayList<UserListenerContainer>> listenersMap) {
-        this.factory = factory;
-        this.template = template;
-        this.producer = producer;
-        this.listenersMap = listenersMap;
+  public ChatController(ConcurrentKafkaListenerContainerFactory<String, String> factory,
+                        Map<String, ArrayList<UserListenerContainer>> listenersMap,
+                        SimpMessagingTemplate template,
+                        KafkaProducer producer,
+                        MessageUtils messageUtils) {
+    this.factory = factory;
+    this.listenersMap = listenersMap;
+    this.template = template;
+    this.producer = producer;
+    this.messageUtils = messageUtils;
+  }
+
+  /**
+   * Receiving message from Web Browser using STOMP CLIENT and further Sending
+   * message to a KAFKA TOPIC
+   */
+  @MessageMapping("/sendMessage")
+  @RequestMapping(value = "/sendMessage", method = RequestMethod.GET, produces = "application/json")
+  public void sendMessage(Principal principal, @Payload Message message) {
+    if (principal != null && messageUtils.checkDestination(principal, message.getChatId())) {
+      logger.info("Got new message from " + principal.getName() + " to " + message.getChatId());
+      producer.send(message.getChatId() + "-" + Message.MessageType.valueOf(message.getType().name())
+              + "-" + message.getContent() + "-" + message.getSender());
+      logger.info("Message to " + message.getChatId() + " from " + principal.getName() + " was sent");
+    }else {
+      logger.info("Message to " + message.getChatId() + " was not sent");
     }
+  }
 
-    /**
-     * Receiving message from Web Browser using STOMP CLIENT and further Sending
-     * message to a KAFKA TOPIC
-     */
-    @MessageMapping("/sendMessage")
-    @RequestMapping(value = "/sendMessage", method = RequestMethod.GET, produces = "application/json")
-    public void sendMessage(Message message) {
-        logger.debug("ChatController.sendMessage : Received message from Web Browser using STOMP Client and further sending it to a KAFKA Topic");
-        /*
-         * Проверять с помощью авторизации доступен ли нужный чат
-         * После этого уже отправлять сообщение в кафку
-         *
-         * fixme @Stanislav comment userRepository.find(message.getUser).map(...).orElseGet(() -> new ResponseEntity(HttpStatus.FORBIDDEN))
-         */
-        producer.send(message.getChatId() + "-" + Message.MessageType.valueOf(message.getType().name()) + "-" + message.getContent() + "-"
-                + message.getSender());
+  /**
+   * Adding username in Websocket
+   */
+  @MessageMapping("/chat.addUser")
+  @SendTo("/topic/public")
+  public Message addUser(@Payload Message message, SimpMessageHeaderAccessor headerAccessor) {
+    logger.debug("added username in web socket session");
+    // Add username in web socket session
+
+    // fixme
+    assert (headerAccessor != null);
+    assert (headerAccessor.getSessionAttributes() != null);
+
+    if (message == null || message.getSender() == null || message.getSender().isEmpty()) {
+      headerAccessor.getSessionAttributes().put("username", "unknown");
+    } else {
+      headerAccessor.getSessionAttributes().put("username", message.getSender());
     }
+    return message;
+  }
 
-    /**
-     * Adding username in Websocket
-     */
-    @MessageMapping("/chat.addUser")
-    @SendTo("/topic/public")
-    public Message addUser(@Payload Message message, SimpMessageHeaderAccessor headerAccessor) {
-        logger.debug("added username in web socket session");
-        // Add username in web socket session
-
-        // fixme
-        assert (headerAccessor != null);
-        assert (headerAccessor.getSessionAttributes() != null);
-
-        if (message == null || message.getSender() == null || message.getSender().isEmpty()) {
-            headerAccessor.getSessionAttributes().put("username", "unknown");
+  /**
+   * Joining to a specific chat:
+   * Creating kafka listener container for each user for each chat and putting it to map
+   * Each listener will send received message to specific STOMP topic
+   */
+  @MessageMapping("/chat.join")
+  public void joinChat(Principal principal, @Payload Message message, @Header("simpSessionId") String sessionId) {
+    if (messageUtils.checkDestination(principal, message.getChatId())) {
+      logger.info("Received request for listener creation from " + sessionId);
+      if (!listenersMap.containsKey(sessionId)) {
+        logger.info("User's list of listeners not exist, creating new one");
+        listenersMap.put(sessionId, new ArrayList<>());
+        logger.info("Creating listener for " + sessionId);
+        listenersMap.get(sessionId).add(
+                new UserListenerContainer(kafkaTopic, principal.getName(), message.getChatId(), factory, template)
+        );
+      } else {
+        if (!listenersMap.get(sessionId).contains(
+                new UserListenerContainer(principal.getName(), message.getChatId()))) {
+          logger.info("No already existing listener, creating new one");
+          listenersMap.get(sessionId).add(
+                  new UserListenerContainer(kafkaTopic, principal.getName(), message.getChatId(), factory, template)
+          );
         } else {
-            headerAccessor.getSessionAttributes().put("username", message.getSender());
+          logger.info("Such listener already exists");
         }
-        return message;
+      }
+    } else {
+      logger.info("Received request for listener creation but access denied or principal is null");
     }
-
-    /**
-     * Joining to a specific chat:
-     * Creating kafka listener container for each user for each chat and putting it to map
-     * Each listener will send received message to specific STOMP topic
-     */
-    @MessageMapping("/chat.join")
-    public void joinChat(Principal principal, @Payload Message message) {
-        if (principal != null) {
-            logger.info("Received request for listener creation from " + principal.getName());
-            if (!listenersMap.containsKey(principal.getName())) {
-                logger.info("User's list of listeners not exist, creating new one");
-                listenersMap.put(principal.getName(), new ArrayList<>());
-                logger.info("Creating listener for " + principal.getName());
-                listenersMap.get(principal.getName()).add(
-                        new UserListenerContainer(kafkaTopic, principal.getName(), message.getChatId(), factory, template)
-                );
-            } else {
-                if (!listenersMap.get(principal.getName()).contains(
-                        new UserListenerContainer(principal.getName(), message.getChatId()))) {
-                    logger.info("No already existing listener, creating new one");
-                    listenersMap.get(principal.getName()).add(
-                            new UserListenerContainer(kafkaTopic, principal.getName(), message.getChatId(), factory, template)
-                    );
-                } else {
-                    logger.info("Such listener already exists");
-                }
-            }
-        }
-    }
-
+  }
 }
+
 
 

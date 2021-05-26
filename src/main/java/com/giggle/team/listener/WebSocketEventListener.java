@@ -16,41 +16,35 @@ import java.util.Map;
 @Component
 public class WebSocketEventListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(WebSocketEventListener.class);
-    private final Map<String, ArrayList<UserListenerContainer>> listenersMap;
-    private final SimpMessageSendingOperations messagingTemplate;
+  private static final Logger logger = LoggerFactory.getLogger(WebSocketEventListener.class);
+  private final Map<String, ArrayList<UserListenerContainer>> listenersMap;
+  private final SimpMessageSendingOperations messagingTemplate;
 
-    public WebSocketEventListener(SimpMessageSendingOperations messagingTemplate, Map<String, ArrayList<UserListenerContainer>> listenersMap) {
-        this.messagingTemplate = messagingTemplate;
-        this.listenersMap = listenersMap;
-    }
+  public WebSocketEventListener(SimpMessageSendingOperations messagingTemplate, Map<String, ArrayList<UserListenerContainer>> listenersMap) {
+    this.messagingTemplate = messagingTemplate;
+    this.listenersMap = listenersMap;
+  }
 
-    @EventListener
-    public void handleWebSocketConnectListener(SessionConnectedEvent event) {
-        logger.info(
-                "WebSocketEventListener.handleWebSocketConnectListener:: NEW USER ADDED : Received a new web socket connection");
-    }
+  @EventListener
+  public void handleWebSocketConnectListener(SessionConnectedEvent event) {
+    logger.info(
+            "WebSocketEventListener.handleWebSocketConnectListener:: NEW USER ADDED : Received a new web socket connection");
+  }
 
-    /**
-     * Removing all of the user`s listeners on it disconnection from websocket
-     */
-    @EventListener
-    public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
-        logger.info("WebSocketEventListener.handleWebSocketDisconnectListener");
-        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
-        assert (headerAccessor.getSessionAttributes() != null);
-        String username = (String) headerAccessor.getSessionAttributes().get("username");
-        if (username != null) {
-            for (int i = 0; i < listenersMap.get(username).size(); i++) {
-                listenersMap.get(username).get(i).stopContainer();
-            }
-            listenersMap.remove(username);
-            logger.info("User Disconnected : " + username, ", Listeners Removed");
-            Message message = new Message();
-            message.setType(Message.MessageType.LEAVE);
-            message.setSender(username);
-            messagingTemplate.convertAndSend("/topic/public", message);
-        }
+  /**
+   * Removing all of the user`s listeners on it disconnection from websocket
+   */
+  @EventListener
+  public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
+    logger.info("WebSocketEventListener.handleWebSocketDisconnectListener");
+    StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
+    assert (headerAccessor.getSessionAttributes() != null);
+    for (int i = 0; i < listenersMap.get(event.getSessionId()).size(); i++) {
+      listenersMap.get(event.getSessionId()).get(i).stopContainer();
+      logger.info("Listener removed");
     }
+    listenersMap.remove(event.getSessionId());
+    logger.info("User Disconnected : " + event.getSessionId(), ", Listeners Removed");
+  }
 
 }
