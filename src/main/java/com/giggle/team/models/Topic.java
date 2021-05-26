@@ -6,6 +6,8 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.TreeSet;
 
 @Document(collection = "topics")
@@ -14,14 +16,14 @@ import java.util.TreeSet;
 public class Topic {
     @Id
     private ObjectId id;
-    private TreeSet<UserEntity> users;
+    private List<UserEntity> users;
     private String kafkaTopic;
     private String stompDestination;
 
     public Topic(String kafkaTopic, String stompDestination) {
         this.kafkaTopic = kafkaTopic;
         this.stompDestination = stompDestination;
-        this.users = new TreeSet<>();
+        this.users = new LinkedList<>();
     }
 
     public void addUser(UserEntity user){

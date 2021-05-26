@@ -16,7 +16,7 @@ import java.security.Principal;
 import java.util.Objects;
 
 @Service
-public class  SubscriptionInterceptor implements ChannelInterceptor {
+public class SubscriptionInterceptor implements ChannelInterceptor {
 
   private final MessageUtils messageUtils;
 

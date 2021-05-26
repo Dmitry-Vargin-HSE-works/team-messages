@@ -20,9 +20,9 @@ public class KafkaProducer {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    public void send(String data) {
+    public void send(String topic, String data) {
         logger.info("KafkaProducer.send:: Topic : {} Data: {}", kafkaTopic, data);
-        kafkaTemplate.send(kafkaTopic, data);
+        kafkaTemplate.send(topic, data);
     }
 
 }

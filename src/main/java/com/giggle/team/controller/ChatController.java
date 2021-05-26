@@ -3,7 +3,9 @@ package com.giggle.team.controller;
 import com.giggle.team.listener.UserListenerContainer;
 import com.giggle.team.models.Message;
 import com.giggle.team.models.Topic;
+import com.giggle.team.models.UserEntity;
 import com.giggle.team.repositories.TopicRepository;
+import com.giggle.team.repositories.UserRepository;
 import com.giggle.team.services.KafkaProducer;
 import com.giggle.team.utils.MessageUtils;
 import org.slf4j.Logger;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -35,6 +38,8 @@ public class ChatController {
   private final SimpMessagingTemplate template;
   private final KafkaProducer producer;
   private final TopicRepository topicRepository;
+  private final UserRepository userRepository;
+  private final KafkaProducer kafkaProducer;
   @Value("${message-topic}")
   private String kafkaTopic;
 
@@ -42,13 +47,15 @@ public class ChatController {
                         Map<String, ArrayList<UserListenerContainer>> listenersMap,
                         SimpMessagingTemplate template,
                         KafkaProducer producer,
-                        MessageUtils messageUtils, TopicRepository topicRepository) {
+                        MessageUtils messageUtils, TopicRepository topicRepository, UserRepository userRepository, KafkaProducer kafkaProducer) {
     this.factory = factory;
     this.listenersMap = listenersMap;
     this.template = template;
     this.producer = producer;
     this.messageUtils = messageUtils;
     this.topicRepository = topicRepository;
+    this.userRepository = userRepository;
+    this.kafkaProducer = kafkaProducer;
   }
 
   /**
@@ -60,7 +67,7 @@ public class ChatController {
   public void sendMessage(Principal principal, @Payload Message message) {
     if (principal != null && messageUtils.checkDestination(principal, message.getChatId())) {
       logger.info("Got new message from " + principal.getName() + " to " + message.getChatId());
-      producer.send(message.getChatId() + "-" + Message.MessageType.valueOf(message.getType().name())
+      producer.send(message.getChatId(), message.getChatId() + "-" + Message.MessageType.valueOf(message.getType().name())
               + "-" + message.getContent() + "-" + message.getSender());
       logger.info("Message to " + message.getChatId() + " from " + principal.getName() + " was sent");
     }else {
@@ -124,10 +131,29 @@ public class ChatController {
   @RequestMapping(value = "/createChat", method = RequestMethod.GET, produces = "application/json")
   @ResponseBody
   public void createChat(Principal principal, @RequestParam("chatWith") String secondUsername){
-    String chatName = principal.getName() + "-" + secondUsername;
-    Topic toCreate = new Topic(chatName, chatName);
-    topicRepository.save(toCreate);
-    // TODO Create kafka topic & check if such chat already exists
+    UserEntity user1 = userRepository.findByEmail(principal.getName());
+    UserEntity user2 = userRepository.findByUsername(secondUsername);
+    String chatName = (user1.getUsername() + "_" + user2.getUsername()).replaceAll("\\s+","");
+    boolean topicExists = false;
+    List<Topic> topics= topicRepository.findAll();
+    for (Topic topic:
+         topics) {
+      if(!topic.getStompDestination().equals("main")){
+        if((topic.getUsers().get(0).getEmail().equals(user1.getEmail()) && topic.getUsers().get(1).getEmail().equals(user2.getEmail())) ||
+                (topic.getUsers().get(0).getEmail().equals(user2.getEmail()) && topic.getUsers().get(1).getEmail().equals(user1.getEmail()))){
+          topicExists = true;
+          break;
+        }
+      }
+    }
+    if(!topicExists){
+      Topic toCreate = new Topic(chatName, chatName);
+      toCreate.addUser(user1);
+      toCreate.addUser(user2);
+      topicRepository.save(toCreate);
+      kafkaProducer.send(chatName, chatName + "-" + "SYSTEM"
+              + "-" + "NEW CHAT CREATED" + "-" + user1.getUsername());
+    }
   }
 }
 
