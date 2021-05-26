@@ -1,11 +1,14 @@
 package com.giggle.team.api;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.giggle.team.models.Topic;
 import com.giggle.team.models.UserEntity;
+import com.giggle.team.repositories.TopicRepository;
 import com.giggle.team.repositories.UserRepository;
 import com.giggle.team.utils.View;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +24,9 @@ public class UserController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private TopicRepository topicRepository;
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -41,7 +47,12 @@ public class UserController {
 
     @JsonView(View.Messages.class)
     @RequestMapping(value = "/search", method = RequestMethod.GET, produces = "application/json")
-    public Page<UserEntity> persons(String query) {
-        return userRepository.findByUsernameStartsWith(query);
+    public Page<UserEntity> persons(String query, Pageable pageable) {
+        return userRepository.findByUsernameStartsWith(query, pageable);
+    }
+
+    @RequestMapping(value = "/chats", method = RequestMethod.GET, produces = "application/json")
+    public Page<Topic> chats(Pageable pageable) {
+        return topicRepository.findAll(pageable);
     }
 }
