@@ -7,4 +7,4 @@ FROM gradle:7.0.2-jdk11
 RUN mkdir /app
 COPY --from=build /home/gradle/src/build/libs/*.jar /app/spring-chat.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar","/app/spring-chat.jar"]
+ENTRYPOINT ["java", "-jar","/app/spring-chat.jar", "--Dserver.port=8080"]
