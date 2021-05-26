@@ -2,6 +2,8 @@ package com.giggle.team.controller;
 
 import com.giggle.team.listener.UserListenerContainer;
 import com.giggle.team.models.Message;
+import com.giggle.team.models.Topic;
+import com.giggle.team.repositories.TopicRepository;
 import com.giggle.team.services.KafkaProducer;
 import com.giggle.team.utils.MessageUtils;
 import org.slf4j.Logger;
@@ -14,10 +16,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -35,6 +34,7 @@ public class ChatController {
   private final MessageUtils messageUtils;
   private final SimpMessagingTemplate template;
   private final KafkaProducer producer;
+  private final TopicRepository topicRepository;
   @Value("${message-topic}")
   private String kafkaTopic;
 
@@ -42,12 +42,13 @@ public class ChatController {
                         Map<String, ArrayList<UserListenerContainer>> listenersMap,
                         SimpMessagingTemplate template,
                         KafkaProducer producer,
-                        MessageUtils messageUtils) {
+                        MessageUtils messageUtils, TopicRepository topicRepository) {
     this.factory = factory;
     this.listenersMap = listenersMap;
     this.template = template;
     this.producer = producer;
     this.messageUtils = messageUtils;
+    this.topicRepository = topicRepository;
   }
 
   /**
@@ -118,6 +119,15 @@ public class ChatController {
     } else {
       logger.info("Received request for listener creation but access denied or principal is null");
     }
+  }
+
+  @RequestMapping(value = "/createChat", method = RequestMethod.GET, produces = "application/json")
+  @ResponseBody
+  public void createChat(Principal principal, @RequestParam("chatWith") String secondUsername){
+    String chatName = principal.getName() + "-" + secondUsername;
+    Topic toCreate = new Topic(chatName, chatName);
+    topicRepository.save(toCreate);
+    // TODO Create kafka topic & check if such chat already exists
   }
 }
 

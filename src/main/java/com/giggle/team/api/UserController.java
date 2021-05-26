@@ -45,11 +45,11 @@ public class UserController {
         return ResponseEntity.ok(new UserEntity(phrase, phrase, phrase));
     }
 
-    @JsonView(View.Messages.class)
+    /*@JsonView(View.Messages.class)
     @RequestMapping(value = "/search", method = RequestMethod.GET, produces = "application/json")
     public Page<UserEntity> persons(String query, Pageable pageable) {
         return userRepository.findByUsernameStartsWith(query, pageable);
-    }
+    }*/
 
     @RequestMapping(value = "/chats", method = RequestMethod.GET, produces = "application/json")
     public Page<Topic> chats(Pageable pageable) {
