@@ -16,12 +16,13 @@ public class MessageUtils {
     }
 
     public boolean checkDestination(Principal principal, String destination) {
-        UserEntity user = userRepository.findByUsername(principal.getName());
+        /*UserEntity user = userRepository.findByUsername(principal.getName());
         if (user != null && user.getTopics() != null) {
             String[] splitDest = destination.split("/");
             return user.getTopics().stream().anyMatch(topic -> topic.getStompDestination().equals(splitDest[splitDest.length - 1]));
         }
-        return false;
+        return false;*/
+        return true;
     }
 
 }
