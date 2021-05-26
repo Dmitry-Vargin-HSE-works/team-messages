@@ -38,7 +38,6 @@ services:
       - 27017:27017
 
   app:
-    image: dimitryvargin/spring-chat
+    image: app:latest
     container_name: spring-chat
-    ports:
-    - 8080:8080
+    network_mode: host
