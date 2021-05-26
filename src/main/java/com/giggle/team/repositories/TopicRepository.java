@@ -12,4 +12,5 @@ public interface TopicRepository extends MongoRepository<Topic, ObjectId> {
 
   List<Topic> findAll();
 
+  Topic findByStompDestination(String destination);
 }

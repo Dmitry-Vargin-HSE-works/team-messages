@@ -42,7 +42,7 @@ public class ChatSelectorController {
     List<String> toSend = new LinkedList<>();
     for (Topic topic:
             queryResult) {
-      if(messageUtils.checkDestination(principal, topic.getStompDestination())){
+      if(messageUtils.checkDestination(principal, topic.getStompDestination()) || topic.getKafkaTopic().equals("main")){
         toSend.add(topic.getKafkaTopic());
       }
     }
