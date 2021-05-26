@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -16,6 +17,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -92,21 +94,21 @@ public class ChatController {
    * Each listener will send received message to specific STOMP topic
    */
   @MessageMapping("/chat.join")
-  public void joinChat(Principal principal, @Payload Message message) {
-    if (principal != null && messageUtils.checkDestination(principal, message.getChatId())) {
-      logger.info("Received request for listener creation from " + principal.getName());
-      if (!listenersMap.containsKey(principal.getName())) {
+  public void joinChat(Principal principal, @Payload Message message, @Header("simpSessionId") String sessionId) {
+    if (messageUtils.checkDestination(principal, message.getChatId())) {
+      logger.info("Received request for listener creation from " + sessionId);
+      if (!listenersMap.containsKey(sessionId)) {
         logger.info("User's list of listeners not exist, creating new one");
-        listenersMap.put(principal.getName(), new ArrayList<>());
-        logger.info("Creating listener for " + principal.getName());
-        listenersMap.get(principal.getName()).add(
+        listenersMap.put(sessionId, new ArrayList<>());
+        logger.info("Creating listener for " + sessionId);
+        listenersMap.get(sessionId).add(
                 new UserListenerContainer(kafkaTopic, principal.getName(), message.getChatId(), factory, template)
         );
       } else {
-        if (!listenersMap.get(principal.getName()).contains(
+        if (!listenersMap.get(sessionId).contains(
                 new UserListenerContainer(principal.getName(), message.getChatId()))) {
           logger.info("No already existing listener, creating new one");
-          listenersMap.get(principal.getName()).add(
+          listenersMap.get(sessionId).add(
                   new UserListenerContainer(kafkaTopic, principal.getName(), message.getChatId(), factory, template)
           );
         } else {
