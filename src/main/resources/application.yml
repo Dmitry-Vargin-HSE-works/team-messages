@@ -5,7 +5,7 @@ spring:
     mongodb:
       password: painfulkafka
       username: kafkadmin
-      host: 127.0.0.1
+      host: ${host:127.0.0.1}
       port: 27017
       authentication-database: admin
   datasource:
@@ -19,7 +19,7 @@ spring:
   profiles:
     active: dev
   kafka:
-    bootstrap-servers: 127.0.0.1:9092
+    bootstrap-servers: ${bootstrap-servers:127.0.0.1}:9092
     consumer:
       group-id: group-consumer
       enable-auto-commit: false
