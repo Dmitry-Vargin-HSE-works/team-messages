@@ -22,7 +22,8 @@ public class MessageUtils {
 
     public boolean checkDestination(Principal principal, String destination) {
         UserEntity user = userRepository.findByEmail(principal.getName());
-        Topic topic = topicRepository.findByStompDestination(destination);
+        String[] splitted = destination.split("/");
+        Topic topic = topicRepository.findByStompDestination(splitted[splitted.length-1]);
         List<UserEntity> userEntities = topic.getUsers();
         if (user != null) {
             for (UserEntity userEntity:

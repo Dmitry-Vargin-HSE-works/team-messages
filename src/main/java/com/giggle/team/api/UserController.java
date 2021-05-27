@@ -39,6 +39,9 @@ public class UserController {
     public ResponseEntity<?> signup(@RequestBody UserEntity userEntity) {
         userEntity.setPassword(bCryptPasswordEncoder.encode(userEntity.getPassword()));
         userRepository.save(userEntity);
+        Topic main = topicRepository.findByStompDestination("main");
+        main.addUser(userEntity);
+        topicRepository.save(main);
         return ResponseEntity.ok().build();
     }
 

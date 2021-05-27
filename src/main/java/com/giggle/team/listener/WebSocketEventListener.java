@@ -39,12 +39,14 @@ public class WebSocketEventListener {
     logger.info("WebSocketEventListener.handleWebSocketDisconnectListener");
     StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
     assert (headerAccessor.getSessionAttributes() != null);
-    for (int i = 0; i < listenersMap.get(event.getSessionId()).size(); i++) {
-      listenersMap.get(event.getSessionId()).get(i).stopContainer();
-      logger.info("Listener removed");
+    if(listenersMap.get(event.getSessionId()) != null){
+      for (int i = 0; i < listenersMap.get(event.getSessionId()).size(); i++) {
+        listenersMap.get(event.getSessionId()).get(i).stopContainer();
+        logger.info("Listener removed");
+      }
+      listenersMap.remove(event.getSessionId());
+      logger.info("User Disconnected : " + event.getSessionId(), ", Listeners Removed");
     }
-    listenersMap.remove(event.getSessionId());
-    logger.info("User Disconnected : " + event.getSessionId(), ", Listeners Removed");
   }
 
 }
