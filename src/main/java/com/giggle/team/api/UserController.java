@@ -9,6 +9,7 @@ import com.giggle.team.utils.View;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,12 +38,15 @@ public class UserController {
     @JsonView(View.Rest.class)
     @RequestMapping(value = "", method = RequestMethod.POST, consumes = "application/json")
     public ResponseEntity<?> signup(@RequestBody UserEntity userEntity) {
-        userEntity.setPassword(bCryptPasswordEncoder.encode(userEntity.getPassword()));
-        userRepository.save(userEntity);
-        Topic main = topicRepository.findByStompDestination("main");
-        main.addUser(userEntity);
-        topicRepository.save(main);
-        return ResponseEntity.ok().build();
+        if(userRepository.findByEmail(userEntity.getEmail()) == null){
+            userEntity.setPassword(bCryptPasswordEncoder.encode(userEntity.getPassword()));
+            userRepository.save(userEntity);
+            Topic main = topicRepository.findByStompDestination("main");
+            main.addUser(userEntity);
+            topicRepository.save(main);
+            return new ResponseEntity<>("User created", HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Email already exists", HttpStatus.FORBIDDEN);
     }
 
     @JsonView(View.Rest.class)
