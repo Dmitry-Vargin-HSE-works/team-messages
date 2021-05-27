@@ -12,13 +12,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Collections;
+import java.util.Objects;
 
 @RequestMapping("/api/v1/users")
 @RestController
@@ -35,18 +36,20 @@ public class UserController {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @Transactional
     @JsonView(View.Rest.class)
     @RequestMapping(value = "", method = RequestMethod.POST, consumes = "application/json")
-    public ResponseEntity<?> signup(@RequestBody UserEntity userEntity) {
-        if(userRepository.findByEmail(userEntity.getEmail()) == null){
+    public ResponseEntity<String> signup(@RequestBody UserEntity userEntity) {
+        if (!Objects.isNull(userRepository.findByEmail(userEntity.getEmail()))) {
             userEntity.setPassword(bCryptPasswordEncoder.encode(userEntity.getPassword()));
-            userRepository.save(userEntity);
             Topic main = topicRepository.findByStompDestination("main");
             main.addUser(userEntity);
+            userEntity.setTopics(Collections.singletonList(main)); // fixme temp crutch
+            userRepository.save(userEntity);
             topicRepository.save(main);
             return new ResponseEntity<>("User created", HttpStatus.OK);
         }
-        return new ResponseEntity<>("Email already exists", HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>("Email already exists", HttpStatus.CONFLICT);
     }
 
     @JsonView(View.Rest.class)
