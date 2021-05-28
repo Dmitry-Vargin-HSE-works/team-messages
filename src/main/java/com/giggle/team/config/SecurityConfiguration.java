@@ -51,13 +51,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .loginProcessingUrl("/login")
-                        .successForwardUrl("/im")
+                        .defaultSuccessUrl("/im")
                         .failureForwardUrl("/login?error")
                         .usernameParameter("email")
                         .passwordParameter("password"))
-                .logout().permitAll().logoutSuccessUrl("/login")
-                .and()
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .invalidateHttpSession(true)
+                        .deleteCookies()
+                        .logoutSuccessUrl("/login?logout")
+                        .permitAll())
                 .httpBasic()
                 .and()
                 .csrf().disable();
