@@ -39,13 +39,18 @@ public class ChatSelectorController {
 
   @RequestMapping(value = "/show/topic", method = RequestMethod.GET, produces = "application/json")
   @ResponseBody
-  public List<String> showTopics(Principal principal){
+  public Map<String, List<String>> showTopics(Principal principal){
     List<Topic> queryResult = topicRepository.findAll();
-    List<String> toSend = new ArrayList<>();
+    Map<String, List<String>> toSend = new HashMap<>();
     for (Topic topic:
             queryResult) {
       if(messageUtils.checkDestination(principal, topic.getStompDestination())){
-        toSend.add(topic.getStompDestination());
+        List<String> usernames = new LinkedList<>();
+        for (UserEntity user:
+             topic.getUsers()) {
+          usernames.add(user.getUsername());
+        }
+        toSend.put(topic.getStompDestination(), usernames);
       }
     }
     return toSend;

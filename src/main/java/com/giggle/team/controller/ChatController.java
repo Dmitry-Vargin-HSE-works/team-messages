@@ -22,10 +22,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @RestController
 @RequestMapping(value = "/kafka/chat")
@@ -128,22 +125,29 @@ public class ChatController {
     }
   }
 
-  @RequestMapping(value = "/createChat", method = RequestMethod.GET, produces = "application/json")
+  @RequestMapping(value = "/createChat", method = RequestMethod.POST, consumes = "application/json")
   @ResponseBody
-  public ResponseEntity<String> createChat(Principal principal, @RequestParam("chatWith") String secondUserEmail) {
-    UserEntity user1 = userRepository.findByEmail(principal.getName());
-    UserEntity user2 = userRepository.findByEmail(secondUserEmail);
-    if(Objects.isNull(user2)){
-      return new ResponseEntity<>("Can`t find second user", HttpStatus.NOT_FOUND);
+  public ResponseEntity<String> createChat(Principal principal, @RequestBody LinkedList<String> emailsToChat) {
+    if (emailsToChat.isEmpty()) {
+      return new ResponseEntity<>("Can`t create chat with only one user", HttpStatus.BAD_REQUEST);
     }
-    String chatName = (user1.getUsername() + "_" + user2.getUsername()).replaceAll("\\s+", "");
+    List<UserEntity> usersToAdd = new LinkedList<>();
+    usersToAdd.add(userRepository.findByEmail(principal.getName()));
+    for (String email :
+            emailsToChat) {
+      UserEntity user = userRepository.findByEmail(email);
+      if (Objects.isNull(user)) {
+        return new ResponseEntity<>("Can`t find one or more users", HttpStatus.NOT_FOUND);
+      }
+      usersToAdd.add(user);
+    }
+    String chatName = UUID.randomUUID().toString();
     boolean topicExists = false;
-    List<Topic> topics = topicRepository.findAllById(user1.getTopics());
+    List<Topic> topics = topicRepository.findAllById(usersToAdd.get(0).getTopics());
     for (Topic topic :
             topics) {
       if (!topic.getStompDestination().equals("main")) {
-        if ((topic.getUsers().get(0).getEmail().equals(user1.getEmail()) && topic.getUsers().get(1).getEmail().equals(user2.getEmail())) ||
-                (topic.getUsers().get(0).getEmail().equals(user2.getEmail()) && topic.getUsers().get(1).getEmail().equals(user1.getEmail()))) {
+        if(topic.getUsers().size() == usersToAdd.size() && topic.getUsers().containsAll(usersToAdd)){
           topicExists = true;
           break;
         }
@@ -151,15 +155,18 @@ public class ChatController {
     }
     if (!topicExists) {
       Topic toCreate = new Topic(chatName, chatName);
-      toCreate.addUser(user1);
-      toCreate.addUser(user2);
+      for (UserEntity user:
+           usersToAdd) {
+        toCreate.addUser(user);
+      }
       topicRepository.save(toCreate);
-      user1.getTopics().add(toCreate.getId());
-      user2.getTopics().add(toCreate.getId());
-      userRepository.save(user1);
-      userRepository.save(user2);
+      for (UserEntity user:
+           usersToAdd) {
+        user.getTopics().add(toCreate.getId());
+        userRepository.save(user);
+      }
       kafkaProducer.send(chatName, chatName + "-" + "SYSTEM"
-              + "-" + "NEW CHAT CREATED" + "-" + user1.getUsername());
+              + "-" + "NEW CHAT CREATED" + "-" + usersToAdd.get(0).getUsername());
       return new ResponseEntity<>("New chat created", HttpStatus.OK);
     }
     return new ResponseEntity<>("Same chat already exists", HttpStatus.CONFLICT);
@@ -167,19 +174,19 @@ public class ChatController {
 
   @RequestMapping(value = "/removeChat", method = RequestMethod.GET, produces = "application/json")
   @ResponseBody
-  public ResponseEntity<String> removeChat(Principal principal, @RequestParam("chatId") String chatId){
-      if(messageUtils.checkDestination(principal, chatId) && !chatId.equals("main")){
-        Topic topic = topicRepository.findByStompDestination(chatId);
-        List<UserEntity> users = topic.getUsers();
-        for (UserEntity user:
-             users) {
-          user.getTopics().remove(topic.getId());
-          userRepository.save(user);
-        }
-        topicRepository.removeTopicById(topic.getId());
-        return new ResponseEntity<>("Chat removed", HttpStatus.OK);
+  public ResponseEntity<String> removeChat(Principal principal, @RequestParam("chatId") String chatId) {
+    if (messageUtils.checkDestination(principal, chatId) && !chatId.equals("main")) {
+      Topic topic = topicRepository.findByStompDestination(chatId);
+      List<UserEntity> users = topic.getUsers();
+      for (UserEntity user :
+              users) {
+        user.getTopics().remove(topic.getId());
+        userRepository.save(user);
       }
-      return new ResponseEntity<>("User not allowed to manipulate this chat", HttpStatus.FORBIDDEN);
+      topicRepository.removeTopicById(topic.getId());
+      return new ResponseEntity<>("Chat removed", HttpStatus.OK);
+    }
+    return new ResponseEntity<>("User not allowed to manipulate this chat", HttpStatus.FORBIDDEN);
   }
 }
 
