@@ -10,7 +10,6 @@ import com.giggle.team.services.KafkaProducer;
 import com.giggle.team.utils.MessageUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
@@ -43,8 +42,6 @@ public class ChatController {
   private final TopicRepository topicRepository;
   private final UserRepository userRepository;
   private final KafkaProducer kafkaProducer;
-  @Value("${message-topic}")
-  private String kafkaTopic;
 
   public ChatController(ConcurrentKafkaListenerContainerFactory<String, String> factory,
                         Map<String, ArrayList<UserListenerContainer>> listenersMap,
@@ -141,7 +138,7 @@ public class ChatController {
     }
     String chatName = (user1.getUsername() + "_" + user2.getUsername()).replaceAll("\\s+", "");
     boolean topicExists = false;
-    List<Topic> topics = topicRepository.findAll();
+    List<Topic> topics = topicRepository.findAllById(user1.getTopics());
     for (Topic topic :
             topics) {
       if (!topic.getStompDestination().equals("main")) {
@@ -166,6 +163,23 @@ public class ChatController {
       return new ResponseEntity<>("New chat created", HttpStatus.OK);
     }
     return new ResponseEntity<>("Same chat already exists", HttpStatus.CONFLICT);
+  }
+
+  @RequestMapping(value = "/removeChat", method = RequestMethod.GET, produces = "application/json")
+  @ResponseBody
+  public ResponseEntity<String> removeChat(Principal principal, @RequestParam("chatId") String chatId){
+      if(messageUtils.checkDestination(principal, chatId) && !chatId.equals("main")){
+        Topic topic = topicRepository.findByStompDestination(chatId);
+        List<UserEntity> users = topic.getUsers();
+        for (UserEntity user:
+             users) {
+          user.getTopics().remove(topic.getId());
+          userRepository.save(user);
+        }
+        topicRepository.removeTopicById(topic.getId());
+        return new ResponseEntity<>("Chat removed", HttpStatus.OK);
+      }
+      return new ResponseEntity<>("User not allowed to manipulate this chat", HttpStatus.FORBIDDEN);
   }
 }
 

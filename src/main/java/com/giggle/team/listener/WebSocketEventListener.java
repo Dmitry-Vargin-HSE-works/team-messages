@@ -1,10 +1,8 @@
 package com.giggle.team.listener;
 
-import com.giggle.team.models.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
@@ -18,10 +16,8 @@ public class WebSocketEventListener {
 
   private static final Logger logger = LoggerFactory.getLogger(WebSocketEventListener.class);
   private final Map<String, ArrayList<UserListenerContainer>> listenersMap;
-  private final SimpMessageSendingOperations messagingTemplate;
 
-  public WebSocketEventListener(SimpMessageSendingOperations messagingTemplate, Map<String, ArrayList<UserListenerContainer>> listenersMap) {
-    this.messagingTemplate = messagingTemplate;
+  public WebSocketEventListener(Map<String, ArrayList<UserListenerContainer>> listenersMap) {
     this.listenersMap = listenersMap;
   }
 
