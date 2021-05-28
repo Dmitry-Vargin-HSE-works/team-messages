@@ -24,14 +24,8 @@ public class MessageUtils {
         UserEntity user = userRepository.findByEmail(principal.getName());
         String[] splitted = destination.split("/");
         Topic topic = topicRepository.findByStompDestination(splitted[splitted.length-1]);
-        List<UserEntity> userEntities = topic.getUsers();
         if (user != null) {
-            for (UserEntity userEntity:
-                 userEntities) {
-                if(userEntity.getEmail().equals(user.getEmail())){
-                    return true;
-                }
-            }
+            return user.getTopics().contains(topic.getId());
         }
         return false;
     }

@@ -45,7 +45,7 @@ public class ChatSelectorController {
     for (Topic topic:
             queryResult) {
       if(messageUtils.checkDestination(principal, topic.getStompDestination())){
-        toSend.add(topic.getKafkaTopic());
+        toSend.add(topic.getStompDestination());
       }
     }
     return toSend;

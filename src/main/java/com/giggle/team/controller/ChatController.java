@@ -113,14 +113,14 @@ public class ChatController {
         listenersMap.put(sessionId, new ArrayList<>());
         logger.info("Creating listener for " + sessionId);
         listenersMap.get(sessionId).add(
-                new UserListenerContainer(kafkaTopic, principal.getName(), message.getChatId(), factory, template)
+                new UserListenerContainer(message.getChatId(), principal.getName(), message.getChatId(), factory, template)
         );
       } else {
         if (!listenersMap.get(sessionId).contains(
                 new UserListenerContainer(principal.getName(), message.getChatId()))) {
           logger.info("No already existing listener, creating new one");
           listenersMap.get(sessionId).add(
-                  new UserListenerContainer(kafkaTopic, principal.getName(), message.getChatId(), factory, template)
+                  new UserListenerContainer(message.getChatId(), principal.getName(), message.getChatId(), factory, template)
           );
         } else {
           logger.info("Such listener already exists");
@@ -157,6 +157,10 @@ public class ChatController {
       toCreate.addUser(user1);
       toCreate.addUser(user2);
       topicRepository.save(toCreate);
+      user1.getTopics().add(toCreate.getId());
+      user2.getTopics().add(toCreate.getId());
+      userRepository.save(user1);
+      userRepository.save(user2);
       kafkaProducer.send(chatName, chatName + "-" + "SYSTEM"
               + "-" + "NEW CHAT CREATED" + "-" + user1.getUsername());
       return new ResponseEntity<>("New chat created", HttpStatus.OK);
