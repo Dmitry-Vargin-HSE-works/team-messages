@@ -43,7 +43,7 @@ public class UserController {
             userEntity.setPassword(bCryptPasswordEncoder.encode(userEntity.getPassword()));
             Topic main = topicRepository.findByStompDestination("main");
             main.addUser(userEntity);
-            //userEntity.setTopics(Collections.singletonList(main)); // fixme temp crutch
+            userEntity.getTopics().add(main.getId());
             userRepository.save(userEntity);
             topicRepository.save(main);
             return new ResponseEntity<>("User created", HttpStatus.OK);

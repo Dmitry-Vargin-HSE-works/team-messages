@@ -15,7 +15,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.TreeSet;
 
 @Document(collection = "users")
 @TypeAlias("user")
@@ -32,13 +31,12 @@ public class UserEntity implements UserDetails {
     private String username;
     @JsonView(View.Rest.class)
     private String password;
-    private List<Topic> topics;
+    private List<ObjectId> topics = new LinkedList<>();
 
     public UserEntity(String username, String password, String email) {
         this.username = username;
         this.password = password;
         this.email = email;
-        topics = new LinkedList<>();
     }
 
     @Override
