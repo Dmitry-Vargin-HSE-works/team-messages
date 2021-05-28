@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="https://www.thymeleaf.org"
->
+      xmlns:th="https://www.thymeleaf.org">
 <head>
     <title>Hello 👋</title>
     <meta charset="UTF-8">
@@ -30,17 +29,8 @@
 						Hello 👋
 					</span>
 
-                <!-- todo -->
-                <div th:if="${param.error}">
-                    Invalid username and password.
-                </div>
-
-                <div th:if="${param.logout}">
-                    You have been logged out.
-                </div>
-
-                <div class="wrap-input100 validate-input m-b-20" data-validate="Emai is required">
-                    <input class="input100" name="email" placeholder="E-mail" type="text"
+                <div class="wrap-input100 validate-input m-b-20" data-validate="Email is required">
+                    <input class="input100" name="email" placeholder="Email" type="text"
                            th:required="required">
                     <span class="focus-input100"></span>
                 </div>
@@ -51,20 +41,12 @@
                     <span class="focus-input100"></span>
                 </div>
 
-                <div class="flex-sb-m w-full p-t-3 p-b-24">
-                    <div class="contact100-form-checkbox">
-                        <input class="input-checkbox100" id="ckb1" type="checkbox" name="remember-me">
-                        <label class="label-checkbox100" for="ckb1">
-                            Remember me
-                        </label>
-                    </div>
-                    <!--
-                    <div>
-                        <a href="#" class="txt1">
-                            Forgot?
-                        </a>
-                    </div>
-                    -->
+                <div th:if="${param.error}">
+                    Invalid username or/and password
+                </div>
+
+                <div th:if="${param.logout}">
+                    You have been logged out
                 </div>
 
                 <form class="container-login100-form-btn m-t-17">
