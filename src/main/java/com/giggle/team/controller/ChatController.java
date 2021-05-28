@@ -11,6 +11,8 @@ import com.giggle.team.utils.MessageUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -24,6 +26,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping(value = "/kafka/chat")
@@ -70,7 +73,7 @@ public class ChatController {
       producer.send(message.getChatId(), message.getChatId() + "-" + Message.MessageType.valueOf(message.getType().name())
               + "-" + message.getContent() + "-" + message.getSender());
       logger.info("Message to " + message.getChatId() + " from " + principal.getName() + " was sent");
-    }else {
+    } else {
       logger.info("Message to " + message.getChatId() + " was not sent");
     }
   }
@@ -130,30 +133,35 @@ public class ChatController {
 
   @RequestMapping(value = "/createChat", method = RequestMethod.GET, produces = "application/json")
   @ResponseBody
-  public void createChat(Principal principal, @RequestParam("chatWith") String secondUsername){
+  public ResponseEntity<String> createChat(Principal principal, @RequestParam("chatWith") String secondUserEmail) {
     UserEntity user1 = userRepository.findByEmail(principal.getName());
-    UserEntity user2 = userRepository.findByUsername(secondUsername);
-    String chatName = (user1.getUsername() + "_" + user2.getUsername()).replaceAll("\\s+","");
+    UserEntity user2 = userRepository.findByEmail(secondUserEmail);
+    if(Objects.isNull(user2)){
+      return new ResponseEntity<>("Can`t find second user", HttpStatus.NOT_FOUND);
+    }
+    String chatName = (user1.getUsername() + "_" + user2.getUsername()).replaceAll("\\s+", "");
     boolean topicExists = false;
-    List<Topic> topics= topicRepository.findAll();
-    for (Topic topic:
-         topics) {
-      if(!topic.getStompDestination().equals("main")){
-        if((topic.getUsers().get(0).getEmail().equals(user1.getEmail()) && topic.getUsers().get(1).getEmail().equals(user2.getEmail())) ||
-                (topic.getUsers().get(0).getEmail().equals(user2.getEmail()) && topic.getUsers().get(1).getEmail().equals(user1.getEmail()))){
+    List<Topic> topics = topicRepository.findAll();
+    for (Topic topic :
+            topics) {
+      if (!topic.getStompDestination().equals("main")) {
+        if ((topic.getUsers().get(0).getEmail().equals(user1.getEmail()) && topic.getUsers().get(1).getEmail().equals(user2.getEmail())) ||
+                (topic.getUsers().get(0).getEmail().equals(user2.getEmail()) && topic.getUsers().get(1).getEmail().equals(user1.getEmail()))) {
           topicExists = true;
           break;
         }
       }
     }
-    if(!topicExists){
+    if (!topicExists) {
       Topic toCreate = new Topic(chatName, chatName);
       toCreate.addUser(user1);
       toCreate.addUser(user2);
       topicRepository.save(toCreate);
       kafkaProducer.send(chatName, chatName + "-" + "SYSTEM"
               + "-" + "NEW CHAT CREATED" + "-" + user1.getUsername());
+      return new ResponseEntity<>("New chat created", HttpStatus.OK);
     }
+    return new ResponseEntity<>("Same chat already exists", HttpStatus.CONFLICT);
   }
 }
 

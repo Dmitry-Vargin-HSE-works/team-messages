@@ -25,38 +25,38 @@ import java.util.Objects;
 @RestController
 public class UserController {
 
-    public static final String phrase = "example";
+  public static final String phrase = "example";
 
-    @Autowired
-    private UserRepository userRepository;
+  @Autowired
+  private UserRepository userRepository;
 
-    @Autowired
-    private TopicRepository topicRepository;
+  @Autowired
+  private TopicRepository topicRepository;
 
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+  @Autowired
+  private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @Transactional
-    @JsonView(View.Rest.class)
-    @RequestMapping(value = "", method = RequestMethod.POST, consumes = "application/json")
-    public ResponseEntity<String> signup(@RequestBody UserEntity userEntity) {
-        if (!Objects.isNull(userRepository.findByEmail(userEntity.getEmail()))) {
-            userEntity.setPassword(bCryptPasswordEncoder.encode(userEntity.getPassword()));
-            Topic main = topicRepository.findByStompDestination("main");
-            main.addUser(userEntity);
-            userEntity.setTopics(Collections.singletonList(main)); // fixme temp crutch
-            userRepository.save(userEntity);
-            topicRepository.save(main);
-            return new ResponseEntity<>("User created", HttpStatus.OK);
-        }
-        return new ResponseEntity<>("Email already exists", HttpStatus.CONFLICT);
+  @Transactional
+  @JsonView(View.Rest.class)
+  @RequestMapping(value = "", method = RequestMethod.POST, consumes = "application/json")
+  public ResponseEntity<String> signup(@RequestBody UserEntity userEntity) {
+    if (Objects.isNull(userRepository.findByEmail(userEntity.getEmail()))) {
+      userEntity.setPassword(bCryptPasswordEncoder.encode(userEntity.getPassword()));
+      Topic main = topicRepository.findByStompDestination("main");
+      main.addUser(userEntity);
+      //userEntity.setTopics(Collections.singletonList(main)); // fixme temp crutch
+      userRepository.save(userEntity);
+      topicRepository.save(main);
+      return new ResponseEntity<>("User created", HttpStatus.OK);
     }
+    return new ResponseEntity<>("Email exists", HttpStatus.CONFLICT);
+  }
 
-    @JsonView(View.Rest.class)
-    @RequestMapping(value = "", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<UserEntity> entity() {
-        return ResponseEntity.ok(new UserEntity(phrase, phrase, phrase));
-    }
+  @JsonView(View.Rest.class)
+  @RequestMapping(value = "", method = RequestMethod.GET, produces = "application/json")
+  public ResponseEntity<UserEntity> entity() {
+    return ResponseEntity.ok(new UserEntity(phrase, phrase, phrase));
+  }
 
     /*@JsonView(View.Messages.class)
     @RequestMapping(value = "/search", method = RequestMethod.GET, produces = "application/json")
@@ -64,8 +64,8 @@ public class UserController {
         return userRepository.findByUsernameStartsWith(query, pageable);
     }*/
 
-    @RequestMapping(value = "/chats", method = RequestMethod.GET, produces = "application/json")
-    public Page<Topic> chats(Pageable pageable) {
-        return topicRepository.findAll(pageable);
-    }
+  @RequestMapping(value = "/chats", method = RequestMethod.GET, produces = "application/json")
+  public Page<Topic> chats(Pageable pageable) {
+    return topicRepository.findAll(pageable);
+  }
 }

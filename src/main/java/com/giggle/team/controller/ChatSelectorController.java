@@ -8,8 +8,7 @@ import com.giggle.team.utils.MessageUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @RestController
 public class ChatSelectorController {
@@ -25,12 +24,15 @@ public class ChatSelectorController {
 
   @RequestMapping(value = "/find/user", method = RequestMethod.GET, produces = "application/json")
   @ResponseBody
-  public List<String> findUsers(@RequestParam("query") String query){
+  public List<Map<String, String>> findUsers(@RequestParam("query") String query){
     List<UserEntity> queryResult = userRepository.findByUsernameIgnoreCaseStartsWith(query);
-    List<String> toSend = new LinkedList<>();
+    List<Map<String, String>> toSend = new ArrayList<>();
     for (UserEntity entity:
          queryResult) {
-      toSend.add(entity.getUsername());
+      Map<String, String> userData = new HashMap<>();
+      userData.put("username", entity.getUsername());
+      userData.put("email", entity.getEmail());
+      toSend.add(userData);
     }
     return toSend;
   }
@@ -39,7 +41,7 @@ public class ChatSelectorController {
   @ResponseBody
   public List<String> showTopics(Principal principal){
     List<Topic> queryResult = topicRepository.findAll();
-    List<String> toSend = new LinkedList<>();
+    List<String> toSend = new ArrayList<>();
     for (Topic topic:
             queryResult) {
       if(messageUtils.checkDestination(principal, topic.getStompDestination())){
