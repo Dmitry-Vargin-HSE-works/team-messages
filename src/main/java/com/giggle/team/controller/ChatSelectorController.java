@@ -26,7 +26,7 @@ public class ChatSelectorController {
   @RequestMapping(value = "/find/user", method = RequestMethod.GET, produces = "application/json")
   @ResponseBody
   public List<String> findUsers(@RequestParam("query") String query){
-    List<UserEntity> queryResult = userRepository.findByUsernameStartsWith(query);
+    List<UserEntity> queryResult = userRepository.findByUsernameIgnoreCaseStartsWith(query);
     List<String> toSend = new LinkedList<>();
     for (UserEntity entity:
          queryResult) {
@@ -42,7 +42,7 @@ public class ChatSelectorController {
     List<String> toSend = new LinkedList<>();
     for (Topic topic:
             queryResult) {
-      if(messageUtils.checkDestination(principal, topic.getStompDestination()) || topic.getKafkaTopic().equals("main")){
+      if(messageUtils.checkDestination(principal, topic.getStompDestination())){
         toSend.add(topic.getKafkaTopic());
       }
     }

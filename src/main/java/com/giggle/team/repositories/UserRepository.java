@@ -15,5 +15,5 @@ public interface UserRepository extends MongoRepository<UserEntity, ObjectId> {
 
     UserEntity findByUsername(String username);
 
-    List<UserEntity> findByUsernameStartsWith(String query);
+    List<UserEntity> findByUsernameIgnoreCaseStartsWith(String query);
 }
