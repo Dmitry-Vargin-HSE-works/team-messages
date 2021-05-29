@@ -1,14 +1,32 @@
 spring:
   application:
     name: Team
+  data:
+    mongodb:
+      password: painfulkafka
+      username: kafkadmin
+      host: ${host:127.0.0.1}
+      port: 27017
+      authentication-database: admin
+  datasource:
+    hikari:
+      auto-commit: true
+  # todo should be off
+  devtools:
+    livereload:
+      enabled: true
+    add-properties: true
+  profiles:
+    active: dev
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: ${bootstrap-servers:127.0.0.1}:9092
     consumer:
-      group-id: test-consumer-group
-    template:
-      default-topic: Chat-Topic
+      group-id: group-consumer
+      enable-auto-commit: false
+      auto-offset-reset: earliest
 server:
-  port: 8080
+  port: ${port:8080}
+  address: 127.0.0.1
   http2:
     enabled: true
   error:
@@ -16,7 +34,13 @@ server:
     include-binding-errors: always
     include-message: always
     include-stacktrace: always
+# todo should be "warn"
 logging:
   level:
     root: info
-    org.springframework.web: off
+    org.springframework.web: debug
+  file:
+    name: logs/application-debug.log
+    clean-history-on-start: true
+
+message-topic: main
