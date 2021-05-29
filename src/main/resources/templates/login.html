@@ -41,11 +41,11 @@
                     <span class="focus-input100"></span>
                 </div>
 
-                <div th:if="${param.error}">
+                <div class="error-logout p-t-14 p-l-66" th:if="${param.error}">
                     Invalid username or/and password
                 </div>
 
-                <div th:if="${param.logout}">
+                <div class="error-logout p-b-26 p-l-94" th:if="${param.logout}">
                     You have been logged out
                 </div>
 
