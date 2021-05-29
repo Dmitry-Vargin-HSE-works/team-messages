@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class MessageUtils {
@@ -24,7 +25,7 @@ public class MessageUtils {
         UserEntity user = userRepository.findByEmail(principal.getName());
         String[] splitted = destination.split("/");
         Topic topic = topicRepository.findByStompDestination(splitted[splitted.length-1]);
-        if (user != null) {
+        if (!Objects.isNull(user) && !Objects.isNull(topic)) {
             return user.getTopics().contains(topic.getId());
         }
         return false;

@@ -188,6 +188,26 @@ public class ChatController {
     }
     return new ResponseEntity<>("User not allowed to manipulate this chat", HttpStatus.FORBIDDEN);
   }
+
+  @RequestMapping(value = "/addUsers", method = RequestMethod.POST, consumes = "application/json")
+  @ResponseBody
+  public ResponseEntity<String> addUsers(Principal principal, @RequestParam ("chatId") String chatId ,@RequestBody LinkedList<String> emailsToChat){
+    if (messageUtils.checkDestination(principal, chatId) && !chatId.equals("main")) {
+      Topic topic = topicRepository.findByStompDestination(chatId);
+      for (String email:
+           emailsToChat) {
+        UserEntity user = userRepository.findByEmail(email);
+        if(!user.getTopics().contains(topic.getId())){
+          topic.getUsers().add(user);
+          user.getTopics().add(topic.getId());
+          userRepository.save(user);
+        }
+      }
+      topicRepository.save(topic);
+      return new ResponseEntity<>("Users added to chat", HttpStatus.OK);
+    }
+    return new ResponseEntity<>("User not allowed to manipulate this chat", HttpStatus.FORBIDDEN);
+  }
 }
 
 
