@@ -17,27 +17,20 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_CREATE_TOPICS: "main:1:3"
 
-
   mongodb:
-
     image: mongo
     container_name: my_mongodb
-
-    #environment:
-    #  - MONGO_INITDB_DATABASE=my_mongo
-    #  - MONGO_INITDB_ROOT_USERNAME=kafkadmin
-    #  - MONGO_INITDB_ROOT_PASSWORD=painfulkafka
-
     environment:
-      - PUID=1000
-      - PGID=1000
+      - MONGO_INITDB_DATABASE=my_mongo
+      - MONGO_INITDB_ROOT_USERNAME=kafkadmin
+      - MONGO_INITDB_ROOT_PASSWORD=painfulkafka
     volumes:
-      - /home/barry/mongodb/database:/data/db
-
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - ./mongo-volume:/data/db
     ports:
       - 27017:27017
 
   app:
-    image: app:latest
+    image: test
     container_name: spring-chat
     network_mode: host

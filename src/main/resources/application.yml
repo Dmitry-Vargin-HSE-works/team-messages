@@ -11,13 +11,6 @@ spring:
   datasource:
     hikari:
       auto-commit: true
-  # todo should be off
-  devtools:
-    livereload:
-      enabled: true
-    add-properties: true
-  profiles:
-    active: dev
   kafka:
     bootstrap-servers: ${bootstrap-servers:127.0.0.1}:9092
     consumer:
@@ -34,13 +27,12 @@ server:
     include-binding-errors: always
     include-message: always
     include-stacktrace: always
-# todo should be "warn"
 logging:
   level:
     root: info
     org.springframework.web: debug
   file:
     name: logs/application-debug.log
-    clean-history-on-start: true
+    clean-history-on-start: false
 
 message-topic: main
