@@ -364,6 +364,12 @@ iframe {
   opacity: 1;
 }
 
+/*error*/
+.error-logout {
+  font-family: Ubuntu-Bold;
+  color: #403866;
+}
+
 @media (max-width: 992px) {
   .alert-validate::before {
     visibility: visible;

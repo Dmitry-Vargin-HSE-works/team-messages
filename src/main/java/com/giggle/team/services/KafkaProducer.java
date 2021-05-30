@@ -12,16 +12,17 @@ public class KafkaProducer {
     private static final Logger logger = LoggerFactory.getLogger(KafkaProducer.class);
 
     private final KafkaTemplate<String, String> kafkaTemplate;
+
     @Value("${message-topic}")
-    String kafkaTopic;
+    private String kafkaTopic;
 
     public KafkaProducer(KafkaTemplate<String, String> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    public void send(String data) {
+    public void send(String topic, String data) {
         logger.info("KafkaProducer.send:: Topic : {} Data: {}", kafkaTopic, data);
-        kafkaTemplate.send(kafkaTopic, data);
+        kafkaTemplate.send(topic, data);
     }
 
 }

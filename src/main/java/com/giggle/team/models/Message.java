@@ -61,9 +61,8 @@ public class Message {
     }
 
     @Override
-	public String toString() {
-		return "ChatMessage [type=" + type + ", content=" + content + ", sender=" + sender + "]";
-	}
-    
-    
+    public String toString() {
+        return "ChatMessage [type=" + type + ", content=" + content + ", sender=" + sender + "]";
+    }
+
 }
