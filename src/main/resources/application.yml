@@ -3,8 +3,8 @@ spring:
     name: Team
   data:
     mongodb:
-      password: painfulkafka
-      username: kafkadmin
+      password: root
+      username: root
       host: ${host:127.0.0.1}
       port: 27017
       authentication-database: admin
@@ -32,7 +32,7 @@ logging:
     root: info
     org.springframework.web: debug
   file:
-    name: logs/application-debug.log
+    name: resources/logs/application-debug.log
     clean-history-on-start: false
 
 message-topic: main

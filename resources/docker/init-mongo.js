@@ -1,10 +1,10 @@
 db.createUser(
     {
-        user: "kafkadmin",
-        pwd: "painfulkafka",
+        user: "root",
+        pwd: "root",
         roles: [
             {
-                role: "readWrite",
+                role: "admin",
                 db: "my_mongo"
             }
         ]
