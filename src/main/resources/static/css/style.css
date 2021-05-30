@@ -1,0 +1,424 @@
+*, *::after, *::before {
+    margin: 0;
+    padding: 0;
+    box-sizing: inherit;
+}
+
+html {
+    box-sizing: border-box;
+}
+
+ul {
+    list-style: none;
+}
+
+img {
+    width: 100%;
+    height: auto;
+}
+
+body {
+    height: 100vh;
+    width: 100vw;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    text-align: center;
+}
+
+a {
+    text-decoration: none;
+}
+
+.mainWeb {
+    width: 100%;
+    height: 100%;
+}
+
+.chats {
+	width: 100%;
+	height: calc(100vh - 70px);
+	float: left;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
+.leftSidePanel {
+	position: relative;
+	display: inline-block;
+	left: 0px;
+	width: 320px;
+	height: 100vh;
+	float: left;
+	background: #283d52;
+	border-right: 1px solid #DDD;
+}
+button{
+    cursor: pointer;
+}
+button,input{
+    border: none;
+    outline:none
+}
+.inputSearch{
+    background-color: #DDDDDD;
+}
+.leftSidePanel header{
+    padding: 10px 20px;
+    height: 70px;
+
+}
+
+.inputSearch {
+	width: calc(100% - 85px);
+	height: 40px;
+	background: #DDDDDD;
+	float: left;
+	padding: 8px;
+	margin-top: 14px;
+	border: none;
+	border-radius: 4px;
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.chats {
+	width: 100%;
+	height: calc(100vh - 70px);
+	float: left;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
+.usersChat1 {
+	float: left;
+	width: 100%;
+	height: 80px;
+	background: #2f455c;
+	color: #555;
+	cursor: pointer;
+	overflow: hidden;
+}
+
+.usersChat1:hover {
+	color: #555;
+	background: #2f455c;
+}
+.usersChat1 .usersImg {
+	position: absolute;
+	width: 55px;
+	height: 55px;
+	background: #c3c3c3;
+	background-size: cover;
+	border-radius: 100%;
+	margin: 13px 13px;
+}
+
+.usersChat1:hover {
+	color: #555;
+	background: #617a94;
+}
+
+.usersInfo, .name .message{
+	color: #DDDDDD;
+}
+
+.usersChat1 .usersImg {
+	position: absolute;
+	width: 55px;
+	height: 55px;
+	background: #c3c3c3;
+	background-size: cover;
+	border-radius: 100%;
+	margin: 13px 13px;
+}
+
+.rightPanel1.active {
+	display: block;
+}
+.rightPanel1 {
+	display: none;
+	float: left;
+	width: calc(100% - 321px);
+	height: 100vh;
+	background: #999;
+}
+
+.rightPanel1 {
+	position: relative;
+	/* width: 100%; */
+	height: 70px;
+	background: #FFF;
+}
+
+.leftSide {
+	display: inline-block;
+	clear: none;
+	float: left;
+}
+
+.leftSide .chatName {
+	float: left;
+	margin-left: 30px;
+	margin-top: 13px;
+	color: #444;
+	font-weight: 600;
+	cursor: default;
+}
+
+.chatName > span {
+	font-size: 12px;
+	font-weight: 500;
+	color: #BBB;
+	margin-left: 10px;
+}
+
+.leftSide .chatStatus {
+	float: left;
+	clear: left;
+	margin-left: 30px;
+	margin-top: 5px;
+	color: #419fd9;
+	font-weight: 300;
+	cursor: default;
+}
+
+.rightSide {
+	display: inline-block;
+	clear: none;
+	float: right;
+	margin-right: 20px;
+}
+
+.tbButton, .otherTools .toolButtons {
+	width: 50px;
+	height: 50px;
+	margin-top: 10px;
+	background: #FFF;
+	color: #888;
+	border-radius: 100%;
+}
+
+.tbButton:hover, .otherTools .toolButtons:hover {
+	color: #555;
+	background: #DDD;
+}
+
+.material-icons{
+    width: 20px;
+}
+.convHistory {
+	float: left;
+	position: relative;
+	width: 100%;
+	height: calc(100vh - 140px);
+	background: #333;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
+.userBg {
+	background: #e3e9e9;
+}
+
+.msg {
+	position: relative;
+	width: auto;
+	min-width: 100px;
+	max-width: 45%;
+	height: auto;
+	padding: 25px;
+	padding-bottom: 35px;
+	margin: 20px 15px;
+	margin-bottom: 0px;
+	background: #FFF;
+	border-radius: 7px;
+	clear: both;
+}
+
+.msg:nth-last-child(1) {
+	margin-bottom: 20px;
+}
+
+.msg .timestamp {
+	display: block;
+	position: absolute;
+	right: 10px;
+	bottom: 6px;
+	color: #fff;
+	user-select: none;
+}
+
+.messageReceived {
+	color: #DDDDDD;
+	float: left;
+	background: #3f5d75;
+}
+
+.messageSent {
+	color: #DDDDDD;
+	float: right;
+	background: #6b8fb1;
+}
+
+.messageSent > .timestamp, .messageSent > .readStatus {
+	bottom: 10px;
+	right: 40px;
+	color: #fff;
+	user-select: none;
+}
+
+.messageSent > .readStatus {
+	position: absolute;
+	bottom: 10px;
+	right: 12px;
+}
+.footerSent {
+	width: 100%;
+	height: 70px;
+	float: left;
+	background: #fff;
+}
+
+.footerSent .attach {
+	width: 70px;
+	height: 70px;
+  	color: #777;
+	background: #FFF;
+	float: left;
+}
+
+.footerSent .attach:hover {
+  color: #555;
+	background: #DDD;
+}
+
+.footerSent .d45 {
+	font-size: 32px;
+}
+
+.footerSent .replyMessage,.replyMessage2,.replyMessage3{
+	width: calc(100% - 220px);
+	float: left;
+	height: 70px;
+	padding: 0px 8px;
+	font-size: 16px;
+}
+
+.footerSent .otherTools {
+	float: right;
+	width: 120px;
+	height: 70px;
+}
+
+.info {
+	position: absolute;
+	left: 20px;
+	bottom: 15px;
+	font-size: 12px;
+	color: #666;
+}
+
+.Chat1{
+	/* display: none; */
+}
+.Chat1.active{
+	display:block;
+}
+
+
+@media screen and (max-width: 1180px) {	
+	.config {
+		width: 60%;
+	}
+}
+
+@media screen and (max-width: 980px) {
+	.config {
+		width: 90%;
+	}
+}
+
+@media screen and (max-width: 840px) {
+	.leftSidePanel {
+		width: 40%;
+	}
+	
+	.rightSidePanel {
+		width: calc(60% - 1px);
+	}
+}
+
+@media screen and (max-width: 640px) {
+	body {
+		font-size: 14px;
+	}
+	
+	.leftSidePanel {
+		width: 45%;
+	}
+	
+	.rightPanel1,.rightPanel2,.rightPanel3  {
+		width: calc(55% - 1px);
+	}
+	
+	.msg {
+		width: 90%;
+	}
+}
+
+@media screen and (max-width: 640px) {
+	.leftSidePanel {
+		width: 45%;
+	}
+	
+	.rightPanel1,.rightPanel2,.rightPanel3  {
+		width: calc(55% - 1px);
+	}
+	
+	.msg {
+		width: auto;
+		max-width: 60%;
+	}
+	
+	.profile .changePic, .profile .edit {
+		font-size: 14px;
+		font-weight: 500;
+	}
+	
+	.profile .edit {
+		margin-left: 5px;
+	}
+}
+
+@media screen and (max-width: 540px) {
+	.leftSidePanel{
+		width: 100%;
+		display: none;
+	}
+	.rightPanel1,.rightPanel2,.rightPanel3 {
+		width: 100%;
+	}
+	.rightSide{
+		display: none;
+	}
+	.mobileExit{
+		display: block;
+		margin: 0 auto;
+	}
+	.mobileExit.active{
+		display: block;
+	}
+	.mobileExit{
+		display: none;
+	}
+	.rightPanel1.close{
+		display: none;
+	}
+	
+	.leftSidePanel.active{
+		display: block;
+	}
+}
+
+@media screen and (max-width: 300px) {
+	
+}
