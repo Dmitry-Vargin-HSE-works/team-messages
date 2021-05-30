@@ -14,9 +14,7 @@ window.onload = function () {
     email_valid_err.className = "error-logout p-t-14 p-l-66";
 
     const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    var qwr = document.getElementById("hello");
     emailForm.oninput = function () {
-        qwr.innerHTML = emailForm.value;
         if (re.test(emailForm.value.toLowerCase())) {
             var tmp = document.getElementById("email_valid_err");
             if (tmp) tmp.remove();
