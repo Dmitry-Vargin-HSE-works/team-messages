@@ -12,7 +12,7 @@ import java.util.Map;
 public class CollectionsConfig {
 
     @Bean
-    public Map<String, ArrayList<UserListenerContainer>> listenersMap(){
+    public Map<String, ArrayList<UserListenerContainer>> listenersMap() {
         return new HashMap<>();
     }
 

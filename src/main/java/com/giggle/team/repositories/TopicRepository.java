@@ -9,12 +9,11 @@ import java.util.List;
 
 @Repository
 public interface TopicRepository extends MongoRepository<Topic, ObjectId> {
+    List<Topic> findAll();
 
-  List<Topic> findAll();
+    List<Topic> findAllById(Iterable<ObjectId> ids);
 
-  List<Topic> findAllById(Iterable<ObjectId> ids);
+    Topic findByStompDestination(String destination);
 
-  Topic findByStompDestination(String destination);
-
-  void removeTopicById(ObjectId id);
+    void removeTopicById(ObjectId id);
 }

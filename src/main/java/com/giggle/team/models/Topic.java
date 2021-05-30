@@ -31,4 +31,5 @@ public class Topic {
     public void addUser(UserEntity user) {
         users.add(user);
     }
+
 }

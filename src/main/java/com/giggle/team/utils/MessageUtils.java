@@ -7,7 +7,6 @@ import com.giggle.team.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
-import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -23,12 +22,9 @@ public class MessageUtils {
 
     public boolean checkDestination(Principal principal, String destination) {
         UserEntity user = userRepository.findByEmail(principal.getName());
-        String[] splitted = destination.split("/");
-        Topic topic = topicRepository.findByStompDestination(splitted[splitted.length-1]);
-        if (!Objects.isNull(user) && !Objects.isNull(topic)) {
-            return user.getTopics().contains(topic.getId());
-        }
-        return false;
+        String[] split = destination.split("/");
+        Topic topic = topicRepository.findByStompDestination(split[split.length - 1]);
+        return !Objects.isNull(user) && !Objects.isNull(topic) && user.getTopics().contains(topic.getId());
     }
 
 }

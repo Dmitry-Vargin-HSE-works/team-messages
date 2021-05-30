@@ -14,7 +14,7 @@ public class KafkaProducer {
     private final KafkaTemplate<String, String> kafkaTemplate;
 
     @Value("${message-topic}")
-    String kafkaTopic;
+    private String kafkaTopic;
 
     public KafkaProducer(KafkaTemplate<String, String> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
