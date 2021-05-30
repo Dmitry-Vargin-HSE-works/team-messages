@@ -3,9 +3,10 @@ spring:
     name: Team
   data:
     mongodb:
-      password: root
       username: root
-      host: ${host:127.0.0.1}
+      password: root
+      host: mongo
+      database: test
       port: 27017
       authentication-database: admin
   datasource:

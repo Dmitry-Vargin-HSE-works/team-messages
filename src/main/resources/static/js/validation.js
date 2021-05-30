@@ -4,21 +4,11 @@ function validateEmail(email) {
 }
 
 window.onload = function () {
-    alert(validateEmail("dimitri.ar@qwed.ri"));
     let emailForm = document.getElementById("email");
-    let passwordForm = document.getElementById("password");
-
-    let email_valid_err = document.createElement("div");
-    email_valid_err.id = "email_valid_err";
-    email_valid_err.innerHTML = "Invalid email";
-    email_valid_err.className = "error-logout p-t-14 p-l-66";
-
+    let email_valid_err = document.getElementById("email_valid_err");
     const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     emailForm.oninput = function () {
-        if (re.test(emailForm.value.toLowerCase())) {
-            var tmp = document.getElementById("email_valid_err");
-            if (tmp) tmp.remove();
-        } else
-            passwordForm.after(email_valid_err);
+        console.log(emailForm.value + " " + re.test(emailForm.value))
+        email_valid_err.hidden = re.test(emailForm.value);
     };
 }
