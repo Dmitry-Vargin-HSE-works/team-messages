@@ -29,6 +29,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.kafka:spring-kafka'
 
+    implementation 'org.thymeleaf:thymeleaf-spring5:+'
+    implementation 'org.thymeleaf:thymeleaf:+'
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5:+'
+
     implementation 'io.micrometer:micrometer-registry-prometheus'
 
     implementation 'tomcat:tomcat-apr:5.5.23'
