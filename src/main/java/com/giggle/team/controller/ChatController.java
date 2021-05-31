@@ -141,7 +141,7 @@ public class ChatController {
             }
             usersToAdd.add(user);
         }
-        String chatName = UUID.randomUUID().toString();
+        String chatName = UUID.randomUUID().toString().replace("-", "");
         boolean topicExists = false;
         List<Topic> topics = topicRepository.findAllById(usersToAdd.get(0).getTopics());
         for (Topic topic :

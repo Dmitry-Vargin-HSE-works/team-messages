@@ -1,57 +1,74 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta name="viewport"
-	content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-<title>Spring Boot WebSocket Chat Application</title>
-<link rel="stylesheet" href="/css/main.css" />
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl"
+          crossorigin="anonymous">
+    <link rel="stylesheet"
+          type="text/css"
+          href="../static/css/util.css"
+          th:href="@{/css/util.css}">
+    <link rel="stylesheet"
+          th:href="@{/css/chat.css}"
+          href="../static/css/chat.css">
+    <title>Chat</title>
 </head>
 <body>
-	<noscript>
-		<h2>Sorry! Your browser doesn't support Javascript</h2>
-	</noscript>
+<section class="mainWeb">
+    <div class="leftSidePanel">
+        <header class=" d-flex justify-content-around align-items-center">
+            <input type="search" class="inputSearch w-75" placeholder="Search" id="search">
+        </header>
 
-	<div id="username-page" class="hidden">
-		<div class="username-page-container">
-			<h1 class="title">Type your username</h1>
-			<form id="usernameForm" name="usernameForm">
-				<div class="form-group">
-					<input type="text" id="name" placeholder="Username"
-						autocomplete="off" class="form-control" />
-				</div>
-				<div class="form-group">
-					<button type="submit" class="accent username-submit">Start
-						Chatting</button>
-				</div>
-			</form>
-		</div>
-	</div>
+        <div class="chats" id="chats">
+            <button type="submit" class="usersChat1">
+                <div class="usersInfo">
+                    <div class="usersImg"></div>
+                    <p class="name"> Test Test </p>
+                    <p class="message">qwerty 1234 ...</p>
+                </div>
+            </button>
+        </div>
+    </div>
 
-	<div id="chat-page">
-		<div class="chat-container">
-			<div class="chat-header">
-				<h2>Spring-Kafka Chat Demo</h2>
-			</div>
-			<div class="connecting">Connecting...</div>
-			<ul id="messageArea">
+    <span class="spaceLine"></span>
+    <div class="rightPanel1 active">
+        <div class="topBar">
+            <div class="rightSide">
+                <button class="tbButton otherOptions" id="more-bt">
+                    Exit
+                </button>
+            </div>
 
-			</ul>
-			<form id="messageForm" name="messageForm">
-				<div class="form-group">
-					<div class="input-group clearfix">
-						<input type="text" id="message" placeholder="Type a message..."
-							autocomplete="off" class="form-control" />
-						<button type="submit" class="primary">Send</button>
-					</div>
-				</div>
-			</form>
-		</div>
-	</div>
+            <div class="leftSide">
+                <p class="chatName mb-0">Test Test </p>
+                <p class="chatStatus mt-0 mb-0">Online</p>
+            </div>
+            <div class="connecting">Connecting...</div>
+            <div class="convHistory userBg Chat1" id="messageAreaParent">
 
-	<script
-		src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
-	<script
-		src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-	<script src="/js/main.js"></script>
+            </div>
+
+            <form id="messageForm" class="footerSent">
+                <input id="message" type="text" class="replyMessage" placeholder="Type your message..."/>
+                <div class="otherTools">
+                    <button class="toolButtons audio" id="sendBtn">
+                        <img src="../static/img/send.png" class="material-icons" alt="">
+                        ß
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+<script
+        src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+<script
+        src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script src="/js/main.js"></script>
 </body>
 </html>
