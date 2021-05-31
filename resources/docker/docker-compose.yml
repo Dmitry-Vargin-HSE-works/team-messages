@@ -1,54 +1,94 @@
 version: '3'
 
 services:
+
   zookeeper:
-    image: wurstmeister/zookeeper
-    container_name: myzookeeper
+    image: zookeeper:3.4.9
+    container_name: ZooKeeper
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_PORT: 2181
+      ZOO_SERVERS: server=zoo:2888:3888
     ports:
-      - "2181:2181"
+      - 2181:2181
     networks:
-      - spring_chat
+      - app_env
 
   kafka:
-    image: wurstmeister/kafka
-    container_name: mykafka
-    environment:
-      KAFKA_ADVERTISED_HOST_NAME: localhost
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_CREATE_TOPICS: "main:1:1"
+    image: confluentinc/cp-kafka:5.5.1
+    container_name: Kafka
     ports:
-      - "9092:9092"
-    networks:
-      - spring_chat
+      - 9092:9092
+      - 9999:9999
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://kafka1:19092,LISTENER_DOCKER_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER_INTERNAL:PLAINTEXT,LISTENER_DOCKER_EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER_INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: "zoo:2181"
+      KAFKA_BROKER_ID: 1
+      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_JMX_PORT: 9999
+      KAFKA_JMX_HOSTNAME: ${DOCKER_HOST_IP:-127.0.0.1}
     depends_on:
       - zookeeper
+    networks:
+      - app_env
 
   mongo:
     image: mongo
-    container_name: mongo
+    container_name: MongoDB
     environment:
       - MONGO_INITDB_DATABASE=mongo
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=root
-    volumes:
-      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
-      - ./mongo-volume:/data/db
     ports:
-      - "27017:27017"
+      - 27017:27017
     networks:
-      - spring_chat
+      - app_env
 
   app:
-    image: test
-    container_name: springchat
+    build: '../..'
+    container_name: Application
     ports:
-    - "8080:8080"
+      - 8080:8080
     networks:
-      - spring_chat
+      - app_env
     depends_on:
       - kafka
       - mongo
+      - prometheus
+
+  grafana:
+    build: '../docker/config/grafana'
+    container_name: Grafana
+    ports:
+      - 3000:3000
+    user: "$UID:$GID"
+    volumes:
+      - ./grafana:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      - app_env
+    depends_on:
+      - prometheus
+
+  prometheus:
+    image: prom/prometheus
+    container_name: Prometheus
+    ports:
+      - 9090:9090
+    user: "$UID:$GID"
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus:/prometheus
+    networks:
+      - app_env
 
 networks:
-  spring_chat:
+  app_env:
     driver: bridge
