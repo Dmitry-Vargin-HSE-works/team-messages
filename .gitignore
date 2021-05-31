@@ -17,5 +17,7 @@ logs
 !/.idea/runConfigurations/
 !/.idea/runConfigurations/*
 
-# Docker
+### Docker ###
 resources/docker/mongo-volume
+/resources/docker/grafana/
+/resources/docker/prometheus/
