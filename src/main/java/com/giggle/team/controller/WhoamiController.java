@@ -9,9 +9,11 @@ import java.security.Principal;
 
 @Controller
 public class WhoamiController {
-  @RequestMapping(value = "/whoami", method = RequestMethod.GET)
-  @ResponseBody
-  public String currentUserName(Principal principal) {
-    return principal.getName();
-  }
+
+    @RequestMapping(value = "/whoami", method = RequestMethod.GET)
+    @ResponseBody
+    public String currentUserName(Principal principal) {
+        return principal.getName();
+    }
+
 }

@@ -7,10 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet"
           type="text/css"
-          href="../static/fonts/font-awesome-4.7.0/css/font-awesome.min.css"
-          th:href="@{/fonts/font-awesome-4.7.0/css/font-awesome.min.css}">
-    <link rel="stylesheet"
-          type="text/css"
           href="../static/css/util.css"
           th:href="@{/css/util.css}">
     <link rel="stylesheet"
@@ -33,7 +29,7 @@
 					</span>
 
                 <div class="wrap-input100 validate-input m-b-20" data-validate="Email is required">
-                    <input id="email" class="input100" name="email" placeholder="Email" type="text"
+                    <input id="email" class="input100" name="email" placeholder="Email" type="email"
                            th:required="required">
                     <span class="focus-input100"></span>
                 </div>
@@ -48,7 +44,7 @@
                     <span class="focus-input100"></span>
                 </div>
 
-                <div class="error-logout p-t-14 p-l-66" th:if="${param.error}">
+                <div class="error-logout p-b-14 p-l-66" th:if="${param.error}">
                     Invalid username or/and password
                 </div>
 

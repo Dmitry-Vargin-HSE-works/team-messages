@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl"
+          crossorigin="anonymous">
+    <link rel="stylesheet"
+          type="text/css"
+          href="../static/css/util.css"
+          th:href="@{/css/util.css}">
+    <link rel="stylesheet"
+          href="../static/css/chat.css">
+    <title>Chat</title>
+</head>
+<body>
+    <section class="mainWeb">
+        <div class="leftSidePanel">
+            <header class=" d-flex justify-content-around align-items-center">
+                <input type="search" class="inputSearch w-75" placeholder="Search" id="search">
+            </header>
+
+            <div class="chats">
+                <button type="submit" class="usersChat1">
+                    <div class="usersInfo">
+                        <div class="usersImg"></div>
+                        <p class="name"> Test Test </p>
+                        <p class="message">qwerty 1234 ...</p>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <span class="spaceLine"></span>
+        <div class="rightPanel1 active">
+            <div class="topBar">
+                <div class="rightSide">
+                   <button class="tbButton otherOptions" id="more-bt">
+                       Exit
+                   </button>
+                </div>
+                    
+                <div class="leftSide">
+                    <p class="chatName mb-0">Test Test </p>
+                    <p class="chatStatus mt-0 mb-0">Online</p>
+                </div>
+
+                <div class="convHistory userBg Chat1" id="textInfor">
+                    <div class="msg messageReceived" id="">
+                        qwerty 1234
+                        <span class="timestamp">00:00</span>
+                    </div>
+                    <div class="msg messageSent" id="sendMsg">
+                        fff2
+                        <span class="timestamp">00:01</span>
+                    </div>
+                </div>
+
+                <div class="footerSent">
+                    <input type="text" class="replyMessage" placeholder="Type your message..."/>
+                    <div class="otherTools">
+                        <button class="toolButtons audio" id="sendBtn">
+                            <img src="../static/img/send.png"  class="material-icons" alt="">
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
