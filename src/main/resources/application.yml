@@ -3,11 +3,11 @@ spring:
     name: Team
   data:
     mongodb:
-      username: root
-      password: root
-      host: mongo
-      database: test
-      port: 27017
+      username: ${username:root}
+      password: ${password:root}
+      host: ${host:mongo}
+      database: ${database:application}
+      port: ${port:27017}
       authentication-database: admin
   datasource:
     hikari:
@@ -20,7 +20,6 @@ spring:
       auto-offset-reset: earliest
 server:
   port: ${port:8080}
-  address: 127.0.0.1
   http2:
     enabled: true
   error:
@@ -31,9 +30,20 @@ server:
 logging:
   level:
     root: info
-    org.springframework.web: debug
   file:
-    name: resources/logs/application-debug.log
+    name: logs/application.log
     clean-history-on-start: false
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      percentiles-histogram:
+        "[http.server.requests]": true
 
 message-topic: main

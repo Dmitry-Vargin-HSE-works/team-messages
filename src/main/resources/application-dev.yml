@@ -25,7 +25,6 @@ spring:
       auto-offset-reset: earliest
 server:
   port: ${port:8080}
-  address: 127.0.0.1
   http2:
     enabled: true
   error:
@@ -39,7 +38,7 @@ logging:
     org.springframework.web: warn
     org.springframework.security: debug
   file:
-    name: resources/logs/application-debug.log
+    name: logs/application-debug.log
     clean-history-on-start: true
 management:
   endpoints:
