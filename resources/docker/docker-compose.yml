@@ -41,7 +41,7 @@ services:
       - spring_chat
 
   app:
-    image: test
+    image: dimitryvargin/spring-chat
     container_name: springchat
     ports:
     - "8080:8080"
