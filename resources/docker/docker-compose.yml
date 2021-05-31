@@ -22,6 +22,8 @@ services:
       - spring_chat
     depends_on:
       - zookeeper
+    volumes:
+      - ./kafka:/data/kafka
 
   mongo:
     image: mongo
