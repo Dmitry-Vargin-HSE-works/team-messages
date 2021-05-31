@@ -1,14 +1,26 @@
 spring:
   application:
     name: Team
+  data:
+    mongodb:
+      username: root
+      password: root
+      host: mongo
+      database: test
+      port: 27017
+      authentication-database: admin
+  datasource:
+    hikari:
+      auto-commit: true
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: ${bootstrap-servers:127.0.0.1}:9092
     consumer:
-      group-id: test-consumer-group
-    template:
-      default-topic: Chat-Topic
+      group-id: group-consumer
+      enable-auto-commit: false
+      auto-offset-reset: earliest
 server:
-  port: 8080
+  port: ${port:8080}
+  address: 127.0.0.1
   http2:
     enabled: true
   error:
@@ -19,4 +31,9 @@ server:
 logging:
   level:
     root: info
-    org.springframework.web: off
+    org.springframework.web: debug
+  file:
+    name: resources/logs/application-debug.log
+    clean-history-on-start: false
+
+message-topic: main

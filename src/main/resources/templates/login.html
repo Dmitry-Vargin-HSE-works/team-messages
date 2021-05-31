@@ -13,6 +13,9 @@
           type="text/css"
           href="../static/css/login.css"
           th:href="@{/css/login.css}">
+    <script src="../static/js/validation.js"
+            th:src="@{/js/validation.js}"
+            type="text/javascript"></script>
 </head>
 <body>
 <div class="limiter">
@@ -21,17 +24,21 @@
             <form class="login100-form validate-form flex-sb flex-w"
                   th:action="@{/login}"
                   method="post">
-					<span class="login100-form-title p-b-31">
+					<span id="hello" class="login100-form-title p-b-31">
 						Hello 👋
 					</span>
 
                 <div class="wrap-input100 validate-input m-b-20" data-validate="Email is required">
-                    <input class="input100" name="email" placeholder="Email" type="email"
+                    <input id="email" class="input100" name="email" placeholder="Email" type="email"
                            th:required="required">
                     <span class="focus-input100"></span>
                 </div>
 
-                <div class="wrap-input100 validate-input m-b-16" data-validate="Password is required">
+                <div id="email_valid_err" class="error-logout p-t-14 p-l-66" hidden>
+                    <div>Invalid email</div>
+                </div>
+
+                <div id="password" class="wrap-input100 validate-input m-b-16" data-validate="Password is required">
                     <input class="input100" type="password" name="password" placeholder="Password"
                            th:required="required">
                     <span class="focus-input100"></span>
