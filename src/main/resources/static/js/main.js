@@ -245,10 +245,12 @@ function searchUsers() {
                 }
                 users = JSON.parse(xhr.responseText);
                 for (let [name, email] of Object.entries(users)) {
-                    let result = document.createElement('option');
-                    result.value = name;
-                    result.id = email;
-                    searchResults.appendChild(result);
+                    if(email !== username){
+                        let result = document.createElement('option');
+                        result.value = name;
+                        result.id = email;
+                        searchResults.appendChild(result);
+                    }
                 }
             } else {
                 console.error(xhr.statusText);

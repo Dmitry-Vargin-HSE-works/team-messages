@@ -214,7 +214,6 @@ button,input{
 	margin-top: 6px;
 	background: #FFF;
 	color: #888;
-	border-radius: 100%;
 }
 
 .tbButton:hover, .otherTools .toolButtons:hover {

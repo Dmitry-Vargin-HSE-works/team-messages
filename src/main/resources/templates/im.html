@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -22,9 +22,9 @@
     <div class="leftSidePanel">
         <header class=" d-flex justify-content-around align-items-center">
 
-                <input type="search" class="inputSearch w-75" placeholder="Search" id="search" list="searchResults">
-                <datalist id="searchResults">
-                </datalist>
+            <input type="search" class="inputSearch w-75" placeholder="Search" id="search" list="searchResults">
+            <datalist id="searchResults">
+            </datalist>
 
         </header>
 
@@ -37,9 +37,13 @@
     <div class="rightPanel1 active">
         <div class="topBar">
             <div class="rightSide">
-                <button class="tbButton otherOptions" id="more-bt">
-                    Exit
-                </button>
+                <div sec:authorize="isAuthenticated()" style="width: 100px; height: 70px">
+                    <a href="javascript: document.logoutForm.submit()" style="text-align: center;vertical-align: middle;
+                                                          line-height: 70px;" class="tbButton otherOptions">Sign out</a>
+                    <form name="logoutForm" th:action="@{/logout}" method="post" th:hidden="true">
+                        <input hidden type="submit" value="Sign Out"/>
+                    </form>
+                </div>
             </div>
 
             <div class="leftSide">
