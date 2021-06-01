@@ -18,6 +18,7 @@ let stompClient = null;
 let chatName = null;
 let username = null;
 let socket = null;
+let ids = [];
 
 let colors = ['#2196F3', '#32c787', '#00BCD4', '#ff5652', '#ffc107',
     '#ff85af', '#FF9800', '#39bbb0'];
@@ -96,7 +97,7 @@ function sendMessage(event) {
 
 function onMessageReceived(payload) {
     let message = JSON.parse(payload.body);
-    if (document.getElementById(message.messageId) == null) {
+    if (!ids.includes(message.messageId)) {
         let chatid = message.chatId;
         let sender = message.sender;
         let messageElement = document.createElement('div');
@@ -122,6 +123,7 @@ function onMessageReceived(payload) {
         chatsAreasMap.get(chatid).appendChild(messageElement);
         chatsAreasMap.get(chatid).scrollTop = chatsAreasMap.get(chatid).scrollHeight;
         chatsOnLeft.get(chatid).lastChild.lastChild.textContent = message.content;
+        ids.push(message.messageId);
     }
     /*    if (message.type === 'JOIN') {
             messageElement.classList.add('event-message');
