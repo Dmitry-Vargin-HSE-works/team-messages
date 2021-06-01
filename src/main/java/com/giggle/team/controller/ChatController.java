@@ -167,6 +167,9 @@ public class ChatController {
                     usersToAdd) {
                 user.getTopics().add(toCreate.getId());
                 userRepository.save(user);
+                template.convertAndSendToUser(user.getEmail(), "/queue/service",
+                        new Message("service", Message.MessageType.SYSTEM,
+                                "CHATS_UPDATE", "system", "system", "system"));
             }
             kafkaProducer.send(chatName, chatName + "-" + "SYSTEM"
                     + "-" + "NEW CHAT CREATED" + "-System-System-" +

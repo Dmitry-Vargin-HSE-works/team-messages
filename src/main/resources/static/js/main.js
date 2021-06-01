@@ -68,6 +68,7 @@ function onConnected() {
             type: 'SYSTEM'
         }))
     }
+    stompClient.subscribe('/user/' + username + '/queue/service', onServiceMessageReceived);
     connectingElement.style.display = "none";
     updateChats();
 }
@@ -125,30 +126,15 @@ function onMessageReceived(payload) {
         chatsOnLeft.get(chatid).lastChild.lastChild.textContent = message.content;
         ids.push(message.messageId);
     }
-    /*    if (message.type === 'JOIN') {
-            messageElement.classList.add('event-message');
-            message.content = message.sender + ' joined!';
-        } else if (message.type === 'LEAVE') {
-            messageElement.classList.add('event-message');
-            message.content = message.sender + ' left!';
-        } else {
-            messageElement.classList.add('chat-message');
-            let avatarElement = document.createElement('i');
-            let avatarText = document.createTextNode(message.sender[0]);
-            avatarElement.appendChild(avatarText);
-            avatarElement.style['background-color'] = getAvatarColor(message.sender);
-            messageElement.appendChild(avatarElement);
-            let usernameElement = document.createElement('span');
-            let usernameText = document.createTextNode(message.sender);
-            usernameElement.appendChild(usernameText);
-            messageElement.appendChild(usernameElement);
-        }
-        let textElement = document.createElement('p');
-        let messageText = document.createTextNode(message.content);
-        textElement.appendChild(messageText);
-        messageElement.appendChild(textElement);
-        messageArea.appendChild(messageElement);
-        messageArea.scrollTop = messageArea.scrollHeight;*/
+}
+
+function onServiceMessageReceived(payload){
+    let serviceMessage = JSON.parse(payload.body);
+    if(serviceMessage.content === 'CHATS_UPDATE'){
+        updateChats();
+    }else if(serviceMessage.content === 'USERS_UPDATE'){
+        searchUsers();
+    }
 }
 
 function getAvatarColor(messageSender) {
