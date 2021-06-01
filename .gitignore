@@ -16,3 +16,6 @@ logs
 /.idea/*
 !/.idea/runConfigurations/
 !/.idea/runConfigurations/*
+
+# Docker
+resources/docker/mongo-volume

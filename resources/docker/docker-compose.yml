@@ -3,29 +3,54 @@ version: '3'
 services:
   zookeeper:
     image: wurstmeister/zookeeper
-    container_name: zookeeper
+    container_name: myzookeeper
     ports:
       - "2181:2181"
+    networks:
+      - spring_chat
 
   kafka:
     image: wurstmeister/kafka
-    container_name: kafka
-    ports:
-      - "9092:9092"
+    container_name: mykafka
     environment:
       KAFKA_ADVERTISED_HOST_NAME: localhost
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-
-  mongodb:
-    image: mongo
-    container_name: mongodb
-    environment:
-      - MONGO_INITDB_DATABASE=your-database-name
-      - MONGO_INITDB_ROOT_USERNAME=my-container-root-username
-      - MONGO_INITDB_ROOT_PASSWORD=secret
+      KAFKA_CREATE_TOPICS: "main:1:1"
+    ports:
+      - "9092:9092"
+    networks:
+      - spring_chat
+    depends_on:
+      - zookeeper
     volumes:
-      - ./init-mongo.js/docker/entrypoint-initdb.d/init-mongo.js:ro
+      - ./kafka:/data/kafka
+
+  mongo:
+    image: mongo
+    container_name: mongo
+    environment:
+      - MONGO_INITDB_DATABASE=mongo
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+    volumes:
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
       - ./mongo-volume:/data/db
     ports:
       - "27017:27017"
-    restart: unless-stopped
+    networks:
+      - spring_chat
+
+  app:
+    image: dimitryvargin/spring-chat
+    container_name: springchat
+    ports:
+    - "8080:8080"
+    networks:
+      - spring_chat
+    depends_on:
+      - kafka
+      - mongo
+
+networks:
+  spring_chat:
+    driver: bridge
