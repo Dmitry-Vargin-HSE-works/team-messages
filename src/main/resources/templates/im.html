@@ -21,17 +21,15 @@
 <section class="mainWeb">
     <div class="leftSidePanel">
         <header class=" d-flex justify-content-around align-items-center">
-            <input type="search" class="inputSearch w-75" placeholder="Search" id="search">
+
+                <input type="search" class="inputSearch w-75" placeholder="Search" id="search" list="searchResults">
+                <datalist id="searchResults">
+                </datalist>
+
         </header>
 
         <div class="chats" id="chats">
-            <button type="submit" class="usersChat1">
-                <div class="usersInfo">
-                    <div class="usersImg"></div>
-                    <p class="name"> Test Test </p>
-                    <p class="message">qwerty 1234 ...</p>
-                </div>
-            </button>
+
         </div>
     </div>
 
@@ -45,8 +43,8 @@
             </div>
 
             <div class="leftSide">
-                <p class="chatName mb-0">Test Test </p>
-                <p class="chatStatus mt-0 mb-0">Online</p>
+                <p class="chatName mb-0" id="chatNameOnTop">Test Test </p>
+                <p class="chatStatus mt-0 mb-0" id="chatNameOnTopSub">Online</p>
             </div>
             <div class="connecting">Connecting...</div>
             <div class="convHistory userBg Chat1" id="messageAreaParent">
@@ -57,7 +55,7 @@
                 <input id="message" type="text" class="replyMessage" placeholder="Type your message..."/>
                 <div class="otherTools">
                     <button class="toolButtons audio" id="sendBtn">
-                        <img src="../static/img/send.png" class="material-icons" alt="">
+                        <img src="/img/send.png" class="material-icons" alt="">
                         ß
                     </button>
                 </div>

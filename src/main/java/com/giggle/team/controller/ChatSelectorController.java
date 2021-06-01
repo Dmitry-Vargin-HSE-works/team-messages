@@ -38,6 +38,18 @@ public class ChatSelectorController {
         return toSend;
     }
 
+    @RequestMapping(value = "/show/users", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public Map<String, String> findAllUsers() {
+        List<UserEntity> queryResult = userRepository.findAll();
+        Map<String, String> toSend = new HashMap<>();
+        for (UserEntity entity :
+                queryResult) {
+            toSend.put(entity.getUsername(), entity.getEmail());
+        }
+        return toSend;
+    }
+
     @RequestMapping(value = "/show/topic", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public Map<String, List<String>> showTopics(Principal principal) {
