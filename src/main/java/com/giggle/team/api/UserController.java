@@ -1,6 +1,7 @@
 package com.giggle.team.api;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.giggle.team.controller.ChatController;
 import com.giggle.team.models.Message;
 import com.giggle.team.models.Topic;
 import com.giggle.team.models.UserEntity;
@@ -42,6 +43,9 @@ public class UserController {
     @Autowired
     private SimpMessagingTemplate template;
 
+    @Autowired
+    private ChatController chatController;
+
     @Transactional
     @JsonView(View.Rest.class)
     @RequestMapping(value = "", method = RequestMethod.POST, consumes = "application/json")
@@ -49,6 +53,9 @@ public class UserController {
         if (Objects.isNull(userRepository.findByEmail(userEntity.getEmail()))) {
             userEntity.setPassword(bCryptPasswordEncoder.encode(userEntity.getPassword()));
             Topic main = topicRepository.findByStompDestination("main");
+            if(Objects.isNull(main)){
+                main = chatController.initMainChat();
+            }
             main.addUser(userEntity);
             userEntity.getTopics().add(main.getId());
             userRepository.save(userEntity);

@@ -216,6 +216,14 @@ public class ChatController {
         return new ResponseEntity<>("User not allowed to manipulate this chat", HttpStatus.FORBIDDEN);
     }
 
+    public Topic initMainChat(){
+        Topic main = new Topic("main", "main");
+        kafkaProducer.send("main", "main-SYSTEM-Main chat initialized-System-System-" +
+                UUID.randomUUID().toString().replace("-", ""));
+        topicRepository.save(main);
+        return main;
+    }
+
 }
 
 
