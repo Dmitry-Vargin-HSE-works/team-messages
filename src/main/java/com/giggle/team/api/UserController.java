@@ -41,11 +41,7 @@ public class UserController {
     public ResponseEntity<String> signup(@RequestBody UserEntity userEntity) {
         if (Objects.isNull(userRepository.findByEmail(userEntity.getEmail()))) {
             userEntity.setPassword(bCryptPasswordEncoder.encode(userEntity.getPassword()));
-            Topic main = topicRepository.findByStompDestination("main");
-            main.addUser(userEntity);
-            userEntity.getTopics().add(main.getId());
             userRepository.save(userEntity);
-            topicRepository.save(main);
             return new ResponseEntity<>("User created", HttpStatus.OK);
         }
         return new ResponseEntity<>("Email exists", HttpStatus.CONFLICT);
