@@ -5,6 +5,8 @@ public class Message {
     private String content;
     private String sender;
     private String chatId;
+    private String senderName;
+    private String messageId;
 
     @SuppressWarnings("unused")
     public enum MessageType {
@@ -18,12 +20,14 @@ public class Message {
         super();
     }
 
-    public Message(String chatId, MessageType message, String content, String sender) {
+    public Message(String chatId, MessageType message, String content, String sender, String senderName, String messageId) {
         super();
         this.chatId = chatId;
         this.type = message;
         this.content = content;
         this.sender = sender;
+        this.senderName = senderName;
+        this.messageId = messageId;
     }
 
     public MessageType getType() {
@@ -58,6 +62,22 @@ public class Message {
     @SuppressWarnings("unused")
     public void setChatId(String chatId) {
         this.chatId = chatId;
+    }
+
+    public String getSenderName() {
+        return senderName;
+    }
+
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
+    }
+
+    public String getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
     }
 
     @Override

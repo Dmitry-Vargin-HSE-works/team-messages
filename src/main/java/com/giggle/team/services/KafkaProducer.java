@@ -13,15 +13,12 @@ public class KafkaProducer {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
 
-    @Value("${message-topic}")
-    private String kafkaTopic;
-
     public KafkaProducer(KafkaTemplate<String, String> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 
     public void send(String topic, String data) {
-        logger.info("KafkaProducer.send:: Topic : {} Data: {}", kafkaTopic, data);
+        logger.info("KafkaProducer.send:: Topic : {} Data: {}", topic, data);
         kafkaTemplate.send(topic, data);
     }
 

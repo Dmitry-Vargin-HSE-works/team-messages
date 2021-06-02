@@ -17,14 +17,15 @@ import java.util.Map;
 public class UserListener implements ConsumerSeekAware, MessageListener<String, String> {
 
     SimpMessagingTemplate template;
-    String chat, user;
+    String chat, user, id;
     Logger logger;
 
-    public UserListener(SimpMessagingTemplate template, String chat, String user, Logger logger) {
+    public UserListener(SimpMessagingTemplate template, String chat, String user, Logger logger, String id) {
         this.template = template;
         this.chat = chat;
         this.user = user;
         this.logger = logger;
+        this.id = id;
     }
 
     public void onPartitionsAssigned(Map<TopicPartition, Long> assignments, ConsumerSeekCallback callback) {
@@ -39,9 +40,9 @@ public class UserListener implements ConsumerSeekAware, MessageListener<String, 
     public void onMessage(ConsumerRecord<String, String> data) {
         String[] message = data.value().split("-");
         if (message[0].equals(chat)) {
-            logger.info("Got a new message for " + this.user + " ; From chat " + this.chat);
+            logger.info("Got a new message for " + this.user + " ; From chat " + this.chat + " with listener " + id);
             template.convertAndSendToUser(user, "/queue/" + chat,
-                    new Message(message[0], Message.MessageType.valueOf(message[1]), message[2], message[3]));
+                    new Message(message[0], Message.MessageType.valueOf(message[1]), message[2], message[3], message[4], message[5]));
             //template.convertAndSend("/topic/user/" + user + "/" + chat, new ChatMessage(message[0], ChatMessage.MessageType.valueOf(message[1]), message[2], message[3]));
         }
     }

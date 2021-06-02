@@ -64,8 +64,10 @@ public class ChatController {
     public void sendMessage(Principal principal, @Payload Message message) {
         if (principal != null && messageUtils.checkDestination(principal, message.getChatId())) {
             logger.info("Got new message from " + principal.getName() + " to " + message.getChatId());
-            producer.send(message.getChatId(), message.getChatId() + "-" + Message.MessageType.valueOf(message.getType().name())
-                    + "-" + message.getContent() + "-" + message.getSender());
+            producer.send(message.getChatId(), message.getChatId() + "-"
+                    + Message.MessageType.valueOf(message.getType().name()) + "-" + message.getContent() + "-"
+                    + message.getSender() + "-" + userRepository.findByEmail(message.getSender()).getUsername() + "-"
+                    + UUID.randomUUID().toString().replace("-", ""));
             logger.info("Message to " + message.getChatId() + " from " + principal.getName() + " was sent");
         } else {
             logger.info("Message to " + message.getChatId() + " was not sent");
@@ -107,14 +109,15 @@ public class ChatController {
                 listenersMap.put(sessionId, new ArrayList<>());
                 logger.info("Creating listener for " + sessionId);
                 listenersMap.get(sessionId).add(
-                        new UserListenerContainer(message.getChatId(), principal.getName(), message.getChatId(), factory, template)
+                        new UserListenerContainer(message.getChatId(), principal.getName(), message.getChatId(), factory, template, sessionId)
                 );
             } else {
                 if (!listenersMap.get(sessionId).contains(
                         new UserListenerContainer(principal.getName(), message.getChatId()))) {
                     logger.info("No already existing listener, creating new one");
+                    logger.info("Creating listener for " + sessionId);
                     listenersMap.get(sessionId).add(
-                            new UserListenerContainer(message.getChatId(), principal.getName(), message.getChatId(), factory, template)
+                            new UserListenerContainer(message.getChatId(), principal.getName(), message.getChatId(), factory, template, sessionId)
                     );
                 } else {
                     logger.info("Such listener already exists");
@@ -164,9 +167,13 @@ public class ChatController {
                     usersToAdd) {
                 user.getTopics().add(toCreate.getId());
                 userRepository.save(user);
+                template.convertAndSendToUser(user.getEmail(), "/queue/service",
+                        new Message("service", Message.MessageType.SYSTEM,
+                                "CHATS_UPDATE", "system", "system", "system"));
             }
             kafkaProducer.send(chatName, chatName + "-" + "SYSTEM"
-                    + "-" + "NEW CHAT CREATED" + "-" + usersToAdd.get(0).getUsername());
+                    + "-" + "NEW CHAT CREATED" + "-System-System-" +
+                    UUID.randomUUID().toString().replace("-", ""));
             return new ResponseEntity<>("New chat created", HttpStatus.OK);
         }
         return new ResponseEntity<>("Same chat already exists", HttpStatus.CONFLICT);

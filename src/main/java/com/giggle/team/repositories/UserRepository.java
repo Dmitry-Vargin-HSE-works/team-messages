@@ -12,4 +12,6 @@ public interface UserRepository extends MongoRepository<UserEntity, ObjectId> {
     UserEntity findByEmail(String email);
 
     List<UserEntity> findByUsernameIgnoreCaseStartsWith(String query);
+
+    List<UserEntity> findAll();
 }

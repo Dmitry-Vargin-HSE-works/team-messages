@@ -58,8 +58,8 @@ services:
       - spring
 
   app:
-    image: application:latest
-    container_name: springchat
+    image: dimitryvargin/spring-chat
+    container_name: app
     ports:
       - 8080:8080
     networks:

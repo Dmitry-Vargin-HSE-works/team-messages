@@ -15,13 +15,13 @@ public class UserListenerContainer {
 
     public UserListenerContainer(String kafkaTopic, String user, String chat,
                                  ConcurrentKafkaListenerContainerFactory<String, String> factory,
-                                 SimpMessagingTemplate template) {
+                                 SimpMessagingTemplate template, String id) {
         this.user = user;
         this.chat = chat;
         container = factory.createContainer(kafkaTopic);
         container.getContainerProperties().setGroupId(user);
         container.getContainerProperties().setAssignmentCommitOption(ContainerProperties.AssignmentCommitOption.NEVER);
-        container.getContainerProperties().setMessageListener(new UserListener(template, chat, user, logger));
+        container.getContainerProperties().setMessageListener(new UserListener(template, chat, user, logger, id));
         logger.info("Starting new listener for " + user + " in chat " + chat);
         container.start();
         logger.info("Started new listener for " + user + " in chat " + chat);
