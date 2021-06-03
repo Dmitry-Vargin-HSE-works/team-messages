@@ -232,7 +232,6 @@ function searchUsers() {
                 }
                 users = JSON.parse(xhr.responseText);
                 for (let [name, email] of Object.entries(users)) {
-                    alert(username);
                     if(email !== username){
                         let result = document.createElement('option');
                         result.value = name;
