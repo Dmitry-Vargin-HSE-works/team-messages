@@ -142,6 +142,9 @@ public class ChatController {
             if (Objects.isNull(user)) {
                 return new ResponseEntity<>("Can`t find one or more users", HttpStatus.NOT_FOUND);
             }
+            if (user.getEmail().equals(usersToAdd.get(0).getEmail())){
+                return new ResponseEntity<>("Can`t create chat between same user", HttpStatus.BAD_REQUEST);
+            }
             usersToAdd.add(user);
         }
         String chatName = UUID.randomUUID().toString().replace("-", "");
