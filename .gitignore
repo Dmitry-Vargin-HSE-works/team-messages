@@ -8,14 +8,11 @@ build
 ### Logs ###
 logs
 
-### Prometheus and Grafana ###
-/resources/metrics/grafana
-/resources/metrics/prometheus
-
 ### Run Configuration ###
 /.idea/*
 !/.idea/runConfigurations/
 !/.idea/runConfigurations/*
 
-# Docker
-resources/docker/mongo-volume
+### Docker ###
+/resources/docker/mongo-volume
+/resources/docker/zk-single-kafka-single/
