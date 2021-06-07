@@ -16,3 +16,5 @@ logs
 ### Docker ###
 /resources/docker/mongo-volume
 /resources/docker/zk-single-kafka-single/
+/resources/docker/grafana
+/resources/docker/prometheus
