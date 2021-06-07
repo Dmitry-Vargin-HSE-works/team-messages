@@ -58,7 +58,7 @@ services:
       - spring
 
   app:
-    image: dimitryvargin/spring-chat
+    image: sha256:f66a1cc201eef5ad07ab819e3f4fc9a1129e04a542059f042c7e115e2787a4e4
     container_name: app
     ports:
       - 8080:8080
@@ -67,6 +67,34 @@ services:
     depends_on:
       - kafka
       - mongo
+
+  grafana:
+    build: '../docker/config/grafana'
+    container_name: Grafana
+    ports:
+      - 3000:3000
+    user: "$UID:$GID"
+    volumes:
+      - ./grafana:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      - spring
+    depends_on:
+      - prometheus
+
+  prometheus:
+    image: prom/prometheus
+    container_name: Prometheus
+    ports:
+      - 9090:9090
+    user: "$UID:$GID"
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus:/prometheus
+    networks:
+      - spring
 
 networks:
   spring:
