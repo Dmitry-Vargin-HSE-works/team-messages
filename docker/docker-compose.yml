@@ -47,7 +47,7 @@ services:
       - spring
 
   mongo:
-    image: mongo
+    image: mongo:latest
     container_name: mongo
     user: "$UID:$GID"
     environment:
@@ -55,8 +55,8 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=root
     volumes:
-      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
-      - ./configs/mongo-volume:/data/db
+      - ./configs/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - ./mongo-volume:/data/db
     hostname: mongo
     ports:
       - 27017:27017
