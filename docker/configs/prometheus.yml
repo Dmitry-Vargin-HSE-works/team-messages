@@ -1,6 +1,19 @@
+global:
+  scrape_interval: 5s
+  evaluation_interval: 5s
+
 scrape_configs:
-  - job_name: 'sample_monitoring'
-    scrape_interval: 5s
+  - job_name: 'Apache Kafka Monitoring'
+    static_configs:
+      - targets:
+          - 'kafka:9999"'
+        labels:
+          env: 'prod'
+
+  - job_name: 'Spring Boot Application Monitoring'
     metrics_path: '/actuator/prometheus'
     static_configs:
-      - targets: [ 'app:8080' ]
+      - targets:
+          - 'app:8080'
+        labels:
+          env: 'prod'
