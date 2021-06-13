@@ -58,7 +58,7 @@ services:
       - spring
 
   app:
-    image: sha256:f66a1cc201eef5ad07ab819e3f4fc9a1129e04a542059f042c7e115e2787a4e4
+    image: dimitryvargin/spring-chat
     container_name: app
     ports:
       - 8080:8080
@@ -69,7 +69,7 @@ services:
       - mongo
 
   grafana:
-    build: '../docker/config/grafana'
+    build: 'config/grafana'
     container_name: Grafana
     ports:
       - 3000:3000
