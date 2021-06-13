@@ -1,21 +1,9 @@
-db.createUser(
-    {
-        user: "root",
-        pwd: "root",
-        roles: [
-            {
-                role: "admin",
-                db: "application"
-            }
-        ]
-    }
-);
+use
+application
 
-db.application.insertOne(
-    {
-        "_class": "topic",
-        "kafkaTopic": "main",
-        "stompDestination": "main",
-        "users": []
-    }
-);
+db.application.insertOne({
+    "_class": "topic",
+    "kafkaTopic": "main",
+    "stompDestination": "main",
+    "users": []
+});

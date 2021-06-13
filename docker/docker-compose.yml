@@ -51,7 +51,7 @@ services:
     container_name: mongo
     user: "$UID:$GID"
     environment:
-      - MONGO_INITDB_DATABASE=mongo
+      - MONGO_INITDB_DATABASE=admin
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=root
     volumes:
