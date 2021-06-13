@@ -33,5 +33,16 @@ logging:
   file:
     name: logs/application-debug.log
     clean-history-on-start: false
-
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus,httptrace,metrics
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      percentiles-histogram:
+        "[http.server.requests]": true
 message-topic: main
