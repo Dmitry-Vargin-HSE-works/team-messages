@@ -24,7 +24,7 @@ spring:
       enable-auto-commit: false
       auto-offset-reset: earliest
 server:
-  port: ${port:8080}
+  port: 8080
   http2:
     enabled: true
   error:
@@ -37,9 +37,6 @@ logging:
     root: info
     org.springframework.web: warn
     org.springframework.security: debug
-  file:
-    name: logs/application-debug.log
-    clean-history-on-start: true
 management:
   endpoints:
     web:

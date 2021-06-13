@@ -6,14 +6,14 @@ spring:
       username: ${username:root}
       password: ${password:root}
       host: ${host:mongo}
-      database: ${database:application}
+      database: application
       port: ${port:27017}
       authentication-database: admin
   datasource:
     hikari:
       auto-commit: true
   kafka:
-    bootstrap-servers: ${bootstrap-servers:127.0.0.1}:9092
+    bootstrap-servers: ${bootstrap-servers:kafka}:9092
     consumer:
       group-id: group-consumer
       enable-auto-commit: false
@@ -31,7 +31,7 @@ logging:
   level:
     root: info
   file:
-    name: resources/logs/application-debug.log
+    name: logs/application-debug.log
     clean-history-on-start: false
 
 message-topic: main
