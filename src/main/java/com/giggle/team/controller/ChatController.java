@@ -70,7 +70,7 @@ public class ChatController {
                     + UUID.randomUUID().toString().replace("-", ""));
             logger.info("Message to " + message.getChatId() + " from " + principal.getName() + " was sent");
         } else {
-            logger.info("Message to " + message.getChatId() + " was not sent");
+            logger.error("Message to " + message.getChatId() + " was not sent");
         }
     }
 
@@ -131,13 +131,12 @@ public class ChatController {
     @RequestMapping(value = "/createChat", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
     public ResponseEntity<String> createChat(Principal principal, @RequestBody LinkedList<String> emailsToChat) {
-        if (emailsToChat.isEmpty()) {
+        if (emailsToChat == null || emailsToChat.isEmpty()) {
             return new ResponseEntity<>("Can`t create chat with only one user", HttpStatus.BAD_REQUEST);
         }
         List<UserEntity> usersToAdd = new LinkedList<>();
         usersToAdd.add(userRepository.findByEmail(principal.getName()));
-        for (String email :
-                emailsToChat) {
+        for (String email : emailsToChat) {
             UserEntity user = userRepository.findByEmail(email);
             if (Objects.isNull(user)) {
                 return new ResponseEntity<>("Can`t find one or more users", HttpStatus.NOT_FOUND);
@@ -150,8 +149,7 @@ public class ChatController {
         String chatName = UUID.randomUUID().toString().replace("-", "");
         boolean topicExists = false;
         List<Topic> topics = topicRepository.findAllById(usersToAdd.get(0).getTopics());
-        for (Topic topic :
-                topics) {
+        for (Topic topic : topics) {
             if (!topic.getStompDestination().equals("main")) {
                 if (topic.getUsers().size() == usersToAdd.size() && topic.getUsers().containsAll(usersToAdd)) {
                     topicExists = true;
@@ -161,13 +159,11 @@ public class ChatController {
         }
         if (!topicExists) {
             Topic toCreate = new Topic(chatName, chatName);
-            for (UserEntity user :
-                    usersToAdd) {
+            for (UserEntity user : usersToAdd) {
                 toCreate.addUser(user);
             }
             topicRepository.save(toCreate);
-            for (UserEntity user :
-                    usersToAdd) {
+            for (UserEntity user : usersToAdd) {
                 user.getTopics().add(toCreate.getId());
                 userRepository.save(user);
                 template.convertAndSendToUser(user.getEmail(), "/queue/service",

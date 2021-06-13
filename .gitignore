@@ -5,14 +5,14 @@ build
 ### IDEA ###
 *.iml
 
-### Logs ###
-logs
-
 ### Run Configuration ###
 /.idea/*
 !/.idea/runConfigurations/
 !/.idea/runConfigurations/*
 
 ### Docker ###
-/resources/docker/mongo-volume
-/resources/docker/zk-single-kafka-single/
+/docker/mongo-volume/
+/docker/grafana-volume/
+/docker/kafka-volume/
+/docker/prometheus-volume/
+/docker/zookeeper-volume/

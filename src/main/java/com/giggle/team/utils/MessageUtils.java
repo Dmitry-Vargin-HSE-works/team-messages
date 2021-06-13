@@ -1,15 +1,12 @@
 package com.giggle.team.utils;
 
-import com.giggle.team.models.Message;
 import com.giggle.team.models.Topic;
 import com.giggle.team.models.UserEntity;
 import com.giggle.team.repositories.TopicRepository;
 import com.giggle.team.repositories.UserRepository;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
-import java.util.List;
 import java.util.Objects;
 
 @Service

@@ -4,25 +4,27 @@ services:
 
   zookeeper:
     image: zookeeper:3.4.9
-    hostname: zookeeper
-    ports:
-      - 2181:2181
+    container_name: zookeeper
+    user: "$UID:$GID"
     environment:
       ZOO_MY_ID: 1
       ZOO_PORT: 2181
       ZOO_SERVERS: server=zookeeper:2888:3888
     volumes:
-      - ./zk-single-kafka-single/zoo1/data:/data
-      - ./zk-single-kafka-single/zoo1/datalog:/datalog
+      - ./zookeeper-volume/data:/data
+      - ./zookeeper-volume/datalog:/datalog
+    hostname: zookeeper
+    ports:
+      - 2181:2181
     networks:
       - spring
 
   kafka:
     image: confluentinc/cp-kafka:5.5.1
-    hostname: kafka
-    ports:
-      - 9092:9092
-      - 9999:9999
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    user: "$UID:$GID"
     environment:
       KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://kafka:19092,LISTENER_DOCKER_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER_INTERNAL:PLAINTEXT,LISTENER_DOCKER_EXTERNAL:PLAINTEXT
@@ -36,37 +38,73 @@ services:
       KAFKA_JMX_PORT: 9999
       KAFKA_JMX_HOSTNAME: ${DOCKER_HOST_IP:-127.0.0.1}
     volumes:
-      - ./zk-single-kafka-single/kafka1/data:/var/lib/kafka/data
-    depends_on:
-      - zookeeper
+      - ./kafka-volume:/var/lib/kafka/data
+    hostname: kafka
+    ports:
+      - 9092:9092
+      - 9999:9999
     networks:
       - spring
 
   mongo:
-    image: mongo
+    image: mongo:latest
     container_name: mongo
+    user: "$UID:$GID"
     environment:
-      - MONGO_INITDB_DATABASE=mongo
+      - MONGO_INITDB_DATABASE=admin
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=root
     volumes:
-      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - ./configs/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
       - ./mongo-volume:/data/db
+    hostname: mongo
     ports:
       - 27017:27017
     networks:
       - spring
 
   app:
-    image: dimitryvargin/spring-chat
+    build: '..'
     container_name: app
+    depends_on:
+      - kafka
+      - mongo
+    user: "$UID:$GID"
+    hostname: app
     ports:
       - 8080:8080
     networks:
       - spring
+
+  grafana:
+    build: 'configs/grafana'
+    container_name: grafana
     depends_on:
-      - kafka
-      - mongo
+      - prometheus
+    user: "$UID:$GID"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./grafana-volume:/var/lib/grafana
+    hostname: grafana
+    ports:
+      - 3000:3000
+    networks:
+      - spring
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    user: "$UID:$GID"
+    volumes:
+      - ./configs/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus-volume:/prometheus
+    hostname: prometheus
+    ports:
+      - 9090:9090
+    networks:
+      - spring
 
 networks:
   spring:

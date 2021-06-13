@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 public class ChatSelectorController {
@@ -58,11 +59,7 @@ public class ChatSelectorController {
         for (Topic topic :
                 queryResult) {
             if (messageUtils.checkDestination(principal, topic.getStompDestination())) {
-                List<String> usernames = new LinkedList<>();
-                for (UserEntity user :
-                        topic.getUsers()) {
-                    usernames.add(user.getUsername());
-                }
+                List<String> usernames = topic.getUsers().stream().map(UserEntity::getUsername).collect(Collectors.toCollection(LinkedList::new));
                 toSend.put(topic.getStompDestination(), usernames);
             }
         }
