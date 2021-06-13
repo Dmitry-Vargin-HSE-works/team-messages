@@ -11,7 +11,8 @@ build
 !/.idea/runConfigurations/*
 
 ### Docker ###
-/docker/mongo-volume
-/docker/zk-single-kafka-single/
-/docker/grafana
-/docker/prometheus
+/docker/mongo-volume/
+/docker/grafana-volume/
+/docker/kafka-volume/
+/docker/prometheus-volume/
+/docker/zookeeper-volume/
