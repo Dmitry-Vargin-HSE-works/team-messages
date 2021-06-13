@@ -7,6 +7,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -45,8 +46,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/api/v1/users", "/login").permitAll()
-                .antMatchers(HttpMethod.GET, "/css/**", "/icons/**", "/js/**", "/fonts/**",
-                        "/error", "/api/v1/users", "/login", "/home", "/about", "/actuator", "/actuator/**", "/actuator/prometheus").permitAll()
+                .antMatchers(HttpMethod.GET, "/error", "/api/v1/users", "/login", "/actuator", "/actuator/**", "/actuator/prometheus").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin(form -> form
@@ -66,4 +66,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .csrf().disable();
     }
 
+    public void configure(WebSecurity web) {
+        web.ignoring().antMatchers("/css/**", "/icons/**", "/js/**", "/fonts/**");
+    }
 }

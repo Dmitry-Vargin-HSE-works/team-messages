@@ -128,11 +128,11 @@ function onMessageReceived(payload) {
     }
 }
 
-function onServiceMessageReceived(payload){
+function onServiceMessageReceived(payload) {
     let serviceMessage = JSON.parse(payload.body);
-    if(serviceMessage.content === 'CHATS_UPDATE'){
+    if (serviceMessage.content === 'CHATS_UPDATE') {
         updateChats();
-    }else if(serviceMessage.content === 'USERS_UPDATE'){
+    } else if (serviceMessage.content === 'USERS_UPDATE') {
         searchUsers();
     }
 }
@@ -152,7 +152,7 @@ function updateChats() {
     xhr.send();
     chats = JSON.parse(xhr.responseText);
     chatsOnLeft.clear();
-    while (chatsArea.hasChildNodes()){
+    while (chatsArea.hasChildNodes()) {
         chatsArea.firstChild.remove();
     }
     for (let chatName of Object.keys(chats)) {
@@ -166,7 +166,7 @@ function updateChats() {
         }
         let chatNameText = document.createTextNode(users);
         let msg = '...';
-        if (!chatsAreasMap.has(chatName)){
+        if (!chatsAreasMap.has(chatName)) {
             let chatDiv = document.createElement('div');
             chatDiv.classList.add('convHistory');
             chatDiv.classList.add('userBg');
@@ -231,7 +231,7 @@ function searchUsers() {
                 }
                 users = JSON.parse(xhr.responseText);
                 for (let [name, email] of Object.entries(users)) {
-                    if(email !== username){
+                    if (email !== username) {
                         let result = document.createElement('option');
                         result.value = name;
                         result.id = email;
@@ -249,7 +249,7 @@ function searchUsers() {
     xhr.send(null);
 }
 
-function createChatWithUser(userEmail){
+function createChatWithUser(userEmail) {
     let xhr = new XMLHttpRequest();
     let toSend = new Array(userEmail);
     xhr.open("POST", "/kafka/chat/createChat", true);
@@ -258,7 +258,7 @@ function createChatWithUser(userEmail){
         if (xhr.readyState === 4) {
             if (xhr.status === 200) {
                 updateChats();
-            } else if (xhr.status === 409){
+            } else if (xhr.status === 409) {
                 alert('Same chat already exists');
             } else {
                 console.error(xhr.statusText);
