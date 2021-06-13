@@ -83,8 +83,9 @@ services:
       - prometheus
     user: "$UID:$GID"
     environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ADMIN_USER=grafana
+      - GF_SECURITY_ADMIN_PASSWORD=changeme
+      - GF_USERS_ALLOW_SIGN_UP=false
     volumes:
       - ./grafana-volume:/var/lib/grafana
     hostname: grafana
