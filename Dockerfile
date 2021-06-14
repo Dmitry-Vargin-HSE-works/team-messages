@@ -6,8 +6,6 @@ COPY --chown=gradle:gradle ./build.gradle /home/app/build.gradle
 COPY --chown=gradle:gradle ./settings.gradle /home/app/settings.gradle
 WORKDIR /home/app
 
-RUN apt-get install libapr1.0-dev libssl-dev
-
 RUN gradle build
 
 FROM bellsoft/liberica-openjdk-alpine:11
