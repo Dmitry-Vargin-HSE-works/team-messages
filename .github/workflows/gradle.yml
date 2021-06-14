@@ -2,7 +2,7 @@ name: Build with Gradle
 
 on:
   push:
-    branches: [ master ]
+    branches: [ devops_auto_ci_cd ]
 
 jobs:
   Build:
