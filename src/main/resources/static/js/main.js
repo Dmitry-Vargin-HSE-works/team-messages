@@ -45,6 +45,7 @@ function onConnected() {
     xhr.open('GET', '/show/topic', false);
     xhr.send();
     chats = JSON.parse(xhr.responseText);
+    searchUsers();
     for (let chatName of Object.keys(chats)) {
         let chatDiv = document.createElement('div');
         chatDiv.classList.add('convHistory');
@@ -274,7 +275,6 @@ function createChatWithUser(userEmail) {
 messageArea.scrollTop;
 messageForm.addEventListener('submit', sendMessage, true);
 connect();
-searchUsers();
 let keypress = false;
 document.getElementById("search").addEventListener("keydown", (e) => {
     if (e.key) {

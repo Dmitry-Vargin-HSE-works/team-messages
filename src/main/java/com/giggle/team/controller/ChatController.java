@@ -141,6 +141,9 @@ public class ChatController {
             if (Objects.isNull(user)) {
                 return new ResponseEntity<>("Can`t find one or more users", HttpStatus.NOT_FOUND);
             }
+            if (user.getEmail().equals(usersToAdd.get(0).getEmail())){
+                return new ResponseEntity<>("Can`t create chat between same user", HttpStatus.BAD_REQUEST);
+            }
             usersToAdd.add(user);
         }
         String chatName = UUID.randomUUID().toString().replace("-", "");
@@ -210,6 +213,14 @@ public class ChatController {
             return new ResponseEntity<>("Users added to chat", HttpStatus.OK);
         }
         return new ResponseEntity<>("User not allowed to manipulate this chat", HttpStatus.FORBIDDEN);
+    }
+
+    public Topic initMainChat(){
+        Topic main = new Topic("main", "main");
+        kafkaProducer.send("main", "main-SYSTEM-Main chat initialized-System-System-" +
+                UUID.randomUUID().toString().replace("-", ""));
+        topicRepository.save(main);
+        return main;
     }
 
 }
