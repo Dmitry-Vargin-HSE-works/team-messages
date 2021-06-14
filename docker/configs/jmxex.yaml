@@ -1,5 +1,7 @@
 startDelaySeconds: 3
-hostPort: kafka:9999
+hostPort: kafka:9092
+username:
+password:
 whitelistObjectNames: [ "kafka.server:type=BrokerTopicMetrics,*" ]
 lowercaseOutputName: true
 rules:

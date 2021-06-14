@@ -35,31 +35,18 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false
       KAFKA_JMX_PORT: 9999
       KAFKA_JMX_HOSTNAME: ${DOCKER_HOST_IP:-127.0.0.1}
-      KAFKA_JMX_OPTS: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=kafka -Dcom.sun.management.jmxremote.rmi.port=9999"
     volumes:
       - ./kafka-volume:/var/lib/kafka/data
+    #      - ./configs/jmxex.yaml:/etc/jmx_exporter/jmx_exporter.yaml
     hostname: kafka
     ports:
       - 9092:9092
       - 9999:9999
     networks:
       - spring
-
-  jmxexporter:
-    image: sscaling/jmx-prometheus-exporter
-    container_name: jmxexporter
-    depends_on:
-      - kafka
-    user: "$UID:$GID"
-    environment:
-      SERVICE_PORT: 5556
-    ports:
-      - 5556:5556
-    volumes:
-      - ./configs/jmxex.yml:/opt/jmx_exporter/config.yml
-
 
   mongo:
     image: mongo:latest
