@@ -26,7 +26,7 @@ jobs:
           files: |
             *.jar
 
-    Docker:
+  Docker:
       runs-on: self-hosted
       needs: Build
       steps:
