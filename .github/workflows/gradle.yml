@@ -32,10 +32,18 @@ jobs:
         - name: Getting sources
           uses: actions/checkout@v2
           
-        - name: build docker
-          run:  |
-            docker build -t dimitryvargin/spring-chat .
-            docker push dimitryvargin/spring-chat
+        - name: Login to DockerHub
+          uses: docker/login-action@v1 
+          with:
+            username: ${{ secrets.DOCKER_USER }}
+            password: ${{ secrets.DOCKER_TOKEN }}
+            
+        - name: Build and push
+          id: docker_build
+          uses: docker/build-push-action@v2
+          with:
+            push: true
+            tags: dimitryvargin/spring-chat
   
   
   Deplloy:
