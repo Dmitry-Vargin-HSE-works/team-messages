@@ -2,7 +2,7 @@ name: Build with Gradle
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, workflow ]
 
 jobs:
   Build:
