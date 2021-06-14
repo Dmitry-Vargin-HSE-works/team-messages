@@ -49,12 +49,11 @@ jobs:
 
    #   - name: Image digest
    #     run: echo ${{ steps.docker_build.outputs.digest }}
-  test:
+  docker-compose:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Build the stack
         run: cd ./docker ; ls ; docker-compose up -d
-    
-
-          
+  image: ${{ secrets.DOCKER_USER }}/java_dockercompose
+        
