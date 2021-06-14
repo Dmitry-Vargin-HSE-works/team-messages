@@ -47,5 +47,5 @@ jobs:
             context: ./
             file: ./Dockerfile
             push: true
-            tags: ${{ secrets.DOCKER_USER }}/app-in-docker-jswark:latest
+            tags: ${{ secrets.DOCKER_USER }}/java-docker:latest
           
