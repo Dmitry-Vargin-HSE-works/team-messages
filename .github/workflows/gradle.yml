@@ -24,3 +24,18 @@ jobs:
         - name: Push
           run: |
             docker push dimitryvargin/spring-chat
+            
+  RunOnServer:
+    runs-on: ubuntu-latest
+    needs: [DeplloyToDockerHub,]
+    
+    steps:
+    - name: run
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: demo
+        password: ${{ secrets.DOCKER_PAS }}
+        port: 22
+        script: |
+          touch HELLOWORLD.txt
