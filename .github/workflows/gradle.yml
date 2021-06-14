@@ -54,7 +54,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build the stack
-        run: docker/docker-compose up -d
+        run:
+          cd ./docker |
+          docker-compose up -d
     
 
           
