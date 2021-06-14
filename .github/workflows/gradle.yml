@@ -32,8 +32,10 @@ jobs:
         - name: Getting sources
           uses: actions/checkout@v2
           
-        - run:
-            docker --version
+        - name: build docker
+          run:  |
+            docker build -t app .
+            docker push dimitryvargin/spring-chat:app
   
   
   Deplloy:
