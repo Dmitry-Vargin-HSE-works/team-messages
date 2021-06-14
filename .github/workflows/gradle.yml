@@ -25,6 +25,15 @@ jobs:
           title: "Development Build"
           files: |
             *.jar
+            
+  DeplloyToDockerHub:
+    runs-on: ubuntu-latest
+    steps:
+        - name: Getting sources
+          uses: actions/checkout@v2
+          
+        - run:
+            docker --version
   
   
   Deplloy:
