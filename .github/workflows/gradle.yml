@@ -55,5 +55,5 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build the stack
-        run: cd ./docker ; ls ; docker-compose up -d ; docker push ${{ secrets.DOCKER_USER }}/java_dockercompose
+        run: cd ./docker ; ls ; docker-compose build ; docker push ${{ secrets.DOCKER_USER }}/java_dockercompose
         
