@@ -47,20 +47,6 @@ services:
     networks:
       - spring
 
-  jmxexporter:
-    image: sscaling/jmx-prometheus-exporter
-    container_name: jmxexporter
-    depends_on:
-      - kafka
-    user: "$UID:$GID"
-    environment:
-      SERVICE_PORT: 5556
-    ports:
-      - 5556:5556
-    volumes:
-      - ./configs/jmxex.yml:/opt/jmx_exporter/config.yml
-
-
   mongo:
     image: mongo:latest
     container_name: mongo

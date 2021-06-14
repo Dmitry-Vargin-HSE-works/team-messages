@@ -25,15 +25,27 @@ jobs:
           title: "Development Build"
           files: |
             *.jar
-  
-  
-  Deplloy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: akhileshns/heroku-deploy@v3.12.12
-        with:
-          heroku_api_key: ${{secrets.DMITRY_API_KEY}}
-          heroku_app_name: "kafka-group-chat"
-          heroku_email: ${{secrets.DMITRY_HEROKU_EMAIL}}
+
+    Docker:
+      runs-on: self-hosted
+      needs: Build
+      steps:
+        - name: Login to Docker Hub
+          uses: docker/login-action@v1
+          with:
+            username: ${{ secrets.DOCKER_USER }}
+            password: ${{ secrets.DOCKER_TOKEN }}
+
+        - name: Set up Docker Buildx
+          id: buildx
+          uses: docker/setup-buildx-action@v1
+
+        - name: Build and push
+          id: docker_build
+          uses: docker/build-push-action@v2
+          with:
+            context: ./
+            file: ./Dockerfile
+            push: true
+            tags: ${{ secrets.DOCKER_USER }}/app-in-docker-jswark:latest
           
