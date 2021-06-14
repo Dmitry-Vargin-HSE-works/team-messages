@@ -34,8 +34,8 @@ jobs:
           
         - name: build docker
           run:  |
-            docker build -t app .
-            docker push dimitryvargin/spring-chat:app
+            docker build -t dimitryvargin/spring-chat .
+            docker push dimitryvargin/spring-chat
   
   
   Deplloy:
