@@ -35,12 +35,11 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-      KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false
-      KAFKA_JMX_PORT: 9999
-      KAFKA_JMX_HOSTNAME: ${DOCKER_HOST_IP:-127.0.0.1}
+      JMX_PORT: 9999
+      JMX_HOSTNAME: 127.0.0.1
+      JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false
     volumes:
       - ./kafka-volume:/var/lib/kafka/data
-    #      - ./configs/jmxex.yaml:/etc/jmx_exporter/jmx_exporter.yaml
     hostname: kafka
     ports:
       - 9092:9092
@@ -66,7 +65,7 @@ services:
       - spring
 
   app:
-    build: '..'
+    image: jswark/java-docker:latest
     container_name: app
     depends_on:
       - kafka
@@ -79,7 +78,7 @@ services:
       - spring
 
   grafana:
-    build: 'configs/grafana'
+    build: configs/grafana
     container_name: grafana
     depends_on:
       - prometheus
